@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14532d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Draft Eval">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>10U Draft Evaluator</title>
+<style>
+:root{--bg:#f3f4f1;--card:#fff;--tx:#14181f;--mut:#5b6472;--bd:#d3d7dd;--hd:#14532d;--e0:#16a34a;--e1:#2563eb;--e2:#d97706;--e3:#6b7280}
+@media(prefers-color-scheme:dark){:root{--bg:#10140f;--card:#1b211a;--tx:#f1f4ef;--mut:#a3adb8;--bd:#33402f;--hd:#0b2a17}}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.35 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:env(safe-area-inset-bottom)}
+header{position:sticky;top:0;z-index:5;background:var(--hd);color:#fff;padding:calc(8px + env(safe-area-inset-top)) 10px 8px}
+.bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.bar h1{font-size:17px;margin:0 auto 0 0}
+button,select,input,textarea{font:inherit;color:inherit}
+.btn{min-height:42px;padding:0 12px;border-radius:8px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;font-weight:600}
+.btn.main{background:#fff;color:var(--hd)}
+.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.filters select,#q{min-height:42px;border-radius:8px;border:1px solid var(--bd);background:var(--card);padding:0 8px;width:100%;font-size:16px}
+#q{margin-top:8px}
+#summary{display:flex;gap:6px;padding:8px 10px;overflow-x:auto;font-size:13px}
+#summary span{white-space:nowrap;padding:3px 9px;border-radius:99px;background:var(--card);border:1px solid var(--bd)}
+#count{padding:0 10px 4px;color:var(--mut);font-size:13px}
+#empty{margin:40px 20px;text-align:center;color:var(--mut)}
+.row{display:flex;align-items:center;gap:10px;margin:0 10px 6px;padding:8px 10px;background:var(--card);border:1px solid var(--bd);border-radius:10px;min-height:58px}
+.bib{font-size:26px;font-weight:800;min-width:56px;font-variant-numeric:tabular-nums}
+.mid{flex:1;min-width:0;font-size:13px;color:var(--mut)}
+.chip{display:inline-block;padding:1px 8px;border-radius:99px;border:1px solid var(--bd);font-size:12px;margin-right:3px;color:var(--tx)}
+.chip.White{background:#fff;color:#000}.chip.Color{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.q{display:flex;gap:4px}
+.q button,.seg button{min-height:42px;min-width:42px;border-radius:8px;border:1px solid var(--bd);background:transparent;font-weight:700}
+.on.e0{background:var(--e0);color:#fff;border-color:var(--e0)}.on.e1{background:var(--e1);color:#fff;border-color:var(--e1)}
+.on.e2{background:var(--e2);color:#fff;border-color:var(--e2)}.on.e3{background:var(--e3);color:#fff;border-color:var(--e3)}
+.seg button.on:not(.e0):not(.e1):not(.e2):not(.e3){background:var(--hd);color:#fff;border-color:var(--hd)}
+.badge{display:inline-block;padding:1px 8px;border-radius:6px;font-size:12px;font-weight:700;color:#fff;margin-right:3px}
+.b0{background:var(--e0)}.b1{background:var(--e1)}.b2{background:var(--e2)}.b3{background:var(--e3)}.bx{background:#475569}
+#sheet{position:fixed;inset:0;z-index:20;background:var(--bg);display:none;flex-direction:column}
+#sheet.open{display:flex}
+.sh{display:flex;gap:6px;align-items:center;background:var(--hd);color:#fff;padding:calc(8px + env(safe-area-inset-top)) 10px 8px}
+.sh b{flex:1;text-align:center}
+#sb{overflow:auto;padding:12px 12px calc(24px + env(safe-area-inset-bottom))}
+#sb h4{margin:14px 0 6px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{flex:1;min-height:48px;padding:0 8px}
+textarea{width:100%;min-height:90px;padding:8px;border-radius:8px;border:1px solid var(--bd);background:var(--card)}
+.flag{background:#fde68a;color:#451a03;border-radius:8px;padding:8px 10px;font-weight:600;margin-bottom:8px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:14px}
+.kv b{color:var(--mut);font-weight:500;max-width:55%}.kv span{text-align:right}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <h1>10U Draft Evaluator</h1>
+    <button class="btn main" id="load">Load spreadsheet</button>
+    <button class="btn" id="export">Export Excel</button>
+    <button class="btn" id="clear">Clear</button>
+    <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+  </div>
+  <div id="tools" hidden>
+    <input id="q" type="search" placeholder="Search bib # or any text">
+    <div class="filters">
+      <select id="fe"></select><select id="fp"></select><select id="fr"></select>
+      <select id="ft"></select><select id="fs"></select><select id="fd"></select>
+    </div>
+    <div class="filters" style="grid-template-columns:2fr 1fr">
+      <select id="so"><option value="orig">Sort: sheet order</option><option value="bib">Sort: bib #</option><option value="time">Sort: time slot</option><option value="eval">Sort: evaluation</option></select>
+      <button class="btn" id="now" style="border-color:var(--bd);color:inherit">Now slot</button>
+    </div>
+  </div>
+</header>
+<div id="summary"></div>
+<div id="count"></div>
+<div id="empty">Tap <b>Load spreadsheet</b> to pick your draft pool .xlsx file. Nothing leaves this device.</div>
+<div id="list"></div>
+<div id="sheet"><div class="sh"><button class="btn" data-nav="-1">‹ Prev</button><b id="st"></b><button class="btn" data-nav="1">Next ›</button><button class="btn" data-nav="x">Close</button></div><div id="sb"></div></div>
+<script src="lib/xlsx.full.min.js"></script>
+<script>
+/* ===== SETTINGS you can change ===== */
+const POS=['Center','Forward','Guard'];
+const ROUND=['1-3','4-7','8-10'];
+const EVAL=['Priority Pick','Strong Consideration','Development','Further Evaluation'];
+const EVAL_SHORT=['P','S','D','F'];                 // letters on the quick-tag buttons
+const LEGACY={'development prospect':'Development','needs further evaluation':'Further Evaluation'}; // old wording -> new
+const DEFAULT_STATUS='Draft Pool';                  // status shown first; Hat Picks hidden until you change the filter
+const NAMES={bib:'bib#',status:'draft status',time:'time slot',shirt:'shirt',eval:'evaluation',pos:'position',round:'round',notes:'notes',other:'other notes'};
+/* ==================================== */
+const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let wb,ws,fname='',headers=[],C={},rows=[],P=[],view=[],cur=-1;
+
+function tfmt(v){ if(typeof v!=='number'||v>=1) return v; const m=Math.round(v*1440),h=Math.floor(m/60)%24; return ((h+11)%12+1)+':'+String(m%60).padStart(2,'0')+(h<12?' AM':' PM'); }
+function show(p,c){ const v=p.r[c]; return c===C.time?tfmt(v):v; }
+
+function load(buf,name,tags){
+  wb=XLSX.read(buf,{type:'array',cellStyles:true}); ws=wb.Sheets[wb.SheetNames[0]]; fname=name;
+  rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null,blankrows:true});
+  headers=rows[0].map(h=>String(h??'').trim());
+  C={}; for(const k in NAMES) C[k]=headers.findIndex(h=>h.toLowerCase()===NAMES[k]);
+  P=[]; rows.forEach((r,i)=>{ if(i===0||typeof r[C.bib]!=='number') return;
+    const ev=String(r[C.eval]??'').trim(), e=EVAL.includes(ev)?ev:(LEGACY[ev.toLowerCase()]||'');
+    const p={i,r,bib:r[C.bib],e,pos:POS.includes(r[C.pos])?r[C.pos]:'',rd:ROUND.includes(String(r[C.round]))?String(r[C.round]):'',n:String(r[C.other]??''),
+      slot:String(tfmt(r[C.time])??''),shirt:String(r[C.shirt]??''),status:String(r[C.status]??''),tn:typeof r[C.time]==='number'?r[C.time]:9,txt:r.join(' ').toLowerCase()};
+    const t=tags&&tags[i]; if(t){p.e=t.e;p.pos=t.pos;p.rd=t.rd;p.n=t.n;} P.push(p); });
+  const opts=(id,label,arr,extra)=>$(id).innerHTML=`<option value="">${label}: all</option>`+(extra?`<option value="_">${label}: untagged</option>`:'')+arr.map(a=>`<option>${esc(a)}</option>`).join('');
+  const uniq=f=>[...new Set(P.map(f).filter(Boolean))];
+  opts('#fe','Eval',EVAL,1);opts('#fp','Position',POS,1);opts('#fr','Round',ROUND,1);
+  opts('#ft','Slot',P.slice().sort((a,b)=>a.tn-b.tn).map(p=>p.slot).filter((v,i,a)=>v&&a.indexOf(v)===i));
+  opts('#fs','Shirt',uniq(p=>p.shirt));opts('#fd','Status',uniq(p=>p.status));
+  if(uniq(p=>p.status).includes(DEFAULT_STATUS)) $('#fd').value=DEFAULT_STATUS;
+  $('#tools').hidden=false;$('#empty').style.display='none'; render();
+}
+function render(){
+  const g=id=>$('#'+id).value, q=g('q').trim().toLowerCase(), bad=(s,v)=>s&&(s==='_'?v:v!==s);
+  view=P.map((p,k)=>k).filter(k=>{const p=P[k];
+    if(bad(g('fe'),p.e)||bad(g('fp'),p.pos)||bad(g('fr'),p.rd))return false;
+    if(g('ft')&&p.slot!==g('ft'))return false; if(g('fs')&&p.shirt!==g('fs'))return false; if(g('fd')&&p.status!==g('fd'))return false;
+    return !q||String(p.bib).startsWith(q)||p.txt.includes(q); });
+  const ev=p=>p.e?EVAL.indexOf(p.e):9, so=g('so');
+  view.sort((a,b)=>{const A=P[a],B=P[b]; if(so==='bib')return A.bib-B.bib; if(so==='time')return A.tn-B.tn||A.bib-B.bib; if(so==='eval')return ev(A)-ev(B)||A.bib-B.bib; return a-b;});
+  $('#count').textContent=`Showing ${view.length} of ${P.length} players`;
+  $('#summary').innerHTML=EVAL.map(e=>`<span>${e.split(' ')[0]} ${P.filter(p=>p.e===e).length}</span>`).join('')+`<span>Untagged ${P.filter(p=>!p.e).length}</span>`;
+  $('#list').innerHTML=view.map(k=>{const p=P[k],j=EVAL.indexOf(p.e);
+    return `<div class="row" data-k="${k}"><div class="bib">${p.bib}</div><div class="mid"><div>${p.shirt?`<span class="chip ${esc(p.shirt)}">${esc(p.shirt)}</span>`:''}${esc(p.slot)}${p.status&&p.status!==DEFAULT_STATUS?` <span class="chip">${esc(p.status)}</span>`:''}</div>
+    <div>${p.pos?`<span class="badge bx">${p.pos}</span>`:''}${p.rd?`<span class="badge bx">Rd ${p.rd}</span>`:''}${p.e?`<span class="badge b${j}">${p.e}</span>`:''}</div></div>
+    <div class="q">${EVAL.map((e,x)=>`<button data-q="${k}|${x}" class="${p.e===e?'on e'+x:''}">${EVAL_SHORT[x]}</button>`).join('')}</div></div>`;}).join('');
+}
+function save(){ try{ const t={}; P.forEach(p=>t[p.i]={e:p.e,pos:p.pos,rd:p.rd,n:p.n});
+  localStorage.setItem('dp_tags',JSON.stringify(t)); localStorage.setItem('dp_time',new Date().toLocaleTimeString()); }catch(e){} }
+function setTag(k,f,val){ const p=P[k]; p[f]=p[f]===val?'':val; save(); }
+function openSheet(k){ cur=k; const p=P[k],i=view.indexOf(k);
+  const seg=(lbl,opts,val,f)=>`<h4>${lbl}</h4><div class="seg">${opts.map((o,j)=>`<button data-s="${f}|${j}" class="${val===o?'on'+(f==='e'?' e'+j:''):''}">${o}</button>`).join('')}</div>`;
+  const note=C.notes>=0&&p.r[C.notes]?`<div class="flag">Note on file: ${esc(p.r[C.notes])}</div>`:'';
+  const skip=[C.eval,C.pos,C.round,C.other];
+  $('#st').textContent=`Bib ${p.bib}`+(i>=0?` (${i+1}/${view.length})`:'');
+  $('#sb').innerHTML=note+seg('Evaluation',EVAL,p.e,'e')+seg('Position',POS,p.pos,'pos')+seg('Round',ROUND,p.rd,'rd')+
+   `<h4>My notes</h4><textarea id="nt">${esc(p.n)}</textarea><h4>Spreadsheet details</h4>`+
+   headers.map((h,c)=>skip.includes(c)||p.r[c]==null||p.r[c]===''?'':`<div class="kv"><b>${esc(h)}</b><span>${esc(show(p,c))}</span></div>`).join('');
+  $('#sheet').classList.add('open'); $('#sb').scrollTop=0; }
+function closeSheet(){ $('#sheet').classList.remove('open'); render(); }
+
+/* Export: edits the ORIGINAL sheet in place so times, order and extra rows stay as they were */
+function exportXlsx(){
+  if(!ws)return; const cell=(r,c,v)=>{const a=XLSX.utils.encode_cell({r,c}); if(v==='')delete ws[a]; else ws[a]={t:'s',v};};
+  const range=XLSX.utils.decode_range(ws['!ref']); let rc=C.round;
+  if(rc<0){rc=range.e.c+1; ws[XLSX.utils.encode_cell({r:0,c:rc})]={t:'s',v:'Round'}; range.e.c=rc; (ws['!cols']=ws['!cols']||[])[rc]={wch:8};}
+  P.forEach(p=>{ if(C.eval>=0)cell(p.i,C.eval,p.e); if(C.pos>=0)cell(p.i,C.pos,p.pos); cell(p.i,rc,p.rd); if(C.other>=0)cell(p.i,C.other,p.n); });
+  ws['!ref']=XLSX.utils.encode_range(range); ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:range.e})};
+  const d=new Date(),z=n=>String(n).padStart(2,'0');
+  XLSX.writeFile(wb,`draft_evaluations_${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.xlsx`);
+}
+const b64=buf=>{let s='';const u=new Uint8Array(buf);for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s);};
+$('#load').onclick=()=>{ if(!P.length||confirm('Loading a new file replaces your current work. Export first if needed. Continue?')) $('#file').click(); };
+$('#file').onchange=async e=>{ const f=e.target.files[0]; if(!f)return; const buf=await f.arrayBuffer();
+  try{ localStorage.removeItem('dp_tags'); localStorage.setItem('dp_file',b64(buf)); localStorage.setItem('dp_name',f.name);}catch(x){ alert('Could not autosave this file in the browser. Export often.'); }
+  load(buf,f.name); save(); e.target.value=''; };
+$('#export').onclick=exportXlsx;
+$('#clear').onclick=()=>{ if(confirm('Delete the loaded file and ALL tags from this device?')){ ['dp_file','dp_name','dp_tags','dp_time'].forEach(k=>localStorage.removeItem(k)); location.reload(); } };
+$('#now').onclick=()=>{ const n=new Date(),m=(n.getHours()*60+n.getMinutes())/1440,s=P.filter(p=>p.tn<1&&p.tn<=m).sort((a,b)=>b.tn-a.tn)[0]||P.slice().sort((a,b)=>a.tn-b.tn)[0]; if(s){$('#ft').value=s.slot;render();} };
+['q','fe','fp','fr','ft','fs','fd','so'].forEach(id=>$('#'+id).addEventListener(id==='q'?'input':'change',render));
+$('#list').onclick=e=>{ const q=e.target.closest('[data-q]'); if(q){const[k,x]=q.dataset.q.split('|'); setTag(+k,'e',EVAL[x]); render(); return;}
+  const r=e.target.closest('.row'); if(r) openSheet(+r.dataset.k); };
+$('#sheet').onclick=e=>{ const s=e.target.closest('[data-s]'),n=e.target.closest('[data-nav]');
+  if(s){const[f,x]=s.dataset.s.split('|'); setTag(cur,f==='e'?'e':f,{e:EVAL,pos:POS,rd:ROUND}[f][x]); const y=$('#sb').scrollTop; openSheet(cur); $('#sb').scrollTop=y;}
+  if(n){ if(n.dataset.nav==='x')return closeSheet(); const i=view.indexOf(cur)+ +n.dataset.nav; if(view[i]!==undefined) openSheet(view[i]); } };
+$('#sheet').oninput=e=>{ if(e.target.id==='nt'){P[cur].n=e.target.value;save();} };
+setInterval(()=>{ const t=localStorage.getItem('dp_time'); if(t)$('#count').textContent=$('#count').textContent.split(' · saved')[0]+' · saved '+t; },2000);
+if('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+/* Restore previous session on open */
+(function(){ try{ const f=localStorage.getItem('dp_file'); if(f&&confirm('Restore your previous session ('+localStorage.getItem('dp_name')+')?')){
+  const u=Uint8Array.from(atob(f),c=>c.charCodeAt(0)); load(u.buffer,localStorage.getItem('dp_name'),JSON.parse(localStorage.getItem('dp_tags')||'null')); } }catch(e){} })();
+</script>
+</body>
+</html>
