@@ -22,11 +22,14 @@ Open it once from the home screen so it caches for offline use.
 Three tabs at the top: **Home**, **Find player**, **All bibs**.
 - **Home:** pool averages (free throws made, timed run, height, age), how many players are evaluated, and the split by Evaluation, Position and Round (tap a bar to see that group in the table). Two big buttons go to **Find a player** or the **table of all bibs**.
 - **Find player:** type a bib number (or tap one from the list) to open that player's page.
-- **Player page** is built to fit one iPhone or iPad screen with no scrolling (the green header bar is hidden here; use Back to return). Three sections:
-  1. **Player profile (top):** bib, age, grade and school, then three small tiles for Height, Free throws and Speed. Grey bars show how the other players are spread out; the blue bar and marker are this player. The percent is how many other players they beat.
-  2. **Player details (middle):** every remaining spreadsheet field as text, with any registration note as a yellow flag.
-  3. **Evaluation (bottom):** one row each for Eval (Priority, Strong, Develop, Further), Position and Round (tap again to clear), then your notes.
-  On iPad the page splits into two columns: profile and details on the left, Evaluation on the right. Prev/Next move through the list you came from.
+- **Player page** adapts to the screen and fits without scrolling on iPhone and iPad (the green header bar is hidden here; use Back to return). Sections, top to bottom:
+  1. **Player profile:** bib, age, grade and school, plus charts for Height, Free throws and Speed. Grey bars are the other players; the blue bar and marker are this player; the percent is how many others they beat.
+  2. **Player details:** every remaining spreadsheet field as text, with any registration note as a yellow flag.
+  3. **Evaluation:** Eval, Position and Round buttons (tap again to clear), then your notes.
+  - **iPhone:** three small chart tiles and short button labels.
+  - **iPad portrait:** one column with wide, labeled charts and large buttons with full names (Priority Pick, Strong Consideration, and so on).
+  - **iPad landscape:** one column with three chart tiles across and large buttons.
+  Prev/Next move through the list you came from.
 - **All bibs:** one table with Evaluation, Position, Round, Grade, free throws, run time and height. Tap **P / S / D / F** to tag in one tap; tap a row to open the player. Search, filter, sort, **Clear all filters**.
 - Time slots show as just the time (e.g. 10:10 AM). The **Hat Picks** checkbox adds the 6 NL Hat Pick players to every view.
 - Work autosaves in the browser. Reopening offers to restore it. **Export Excel** often.
