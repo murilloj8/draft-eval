@@ -66,6 +66,17 @@ textarea{width:100%;min-height:90px;padding:8px;border-radius:8px;border:1px sol
 .kv{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:14px}
 .kv b{color:var(--mut);font-weight:500;max-width:55%}.kv span{text-align:right}
 #empty{margin:40px 20px;text-align:center;color:var(--mut)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.tile{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
+.tile b{display:block;font-size:28px;line-height:1.15}.tile span{font-size:13px;color:var(--mut)}
+.cta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.cta button{min-height:68px;border-radius:12px;border:0;background:var(--hd);color:#fff;font-weight:800;font-size:17px}
+.stitle{font-size:18px;font-weight:800;margin:18px 2px 8px}
+.chart{margin:14px 0 4px}.chart .row1{display:flex;justify-content:space-between;font-weight:700}
+.chart small{color:var(--mut);display:block;margin-top:2px}
+svg.h{width:100%;height:auto;display:block}
+.hb{fill:var(--un)}.hp{fill:var(--e1)}.hm{stroke:var(--e1);stroke-width:3}.hd{fill:var(--e1)}.ax{fill:var(--mut);font-size:10px}
+.lg{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:6px}.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;background:var(--un)}.lg i.me{background:var(--e1)}
 </style>
 </head>
 <body>
@@ -79,6 +90,7 @@ textarea{width:100%;min-height:90px;padding:8px;border-radius:8px;border:1px sol
   </div>
   <div id="tabs" hidden>
     <button data-go="home" id="t-home">Home</button>
+    <button data-go="find" id="t-find">Find player</button>
     <button data-go="list" id="t-list">All bibs</button>
     <label><input type="checkbox" id="hat"> Hat Picks</label>
   </div>
@@ -86,12 +98,14 @@ textarea{width:100%;min-height:90px;padding:8px;border-radius:8px;border:1px sol
 <div id="empty">Tap <b>Load spreadsheet</b> to pick your draft pool .xlsx file. Nothing leaves this device.</div>
 <main id="app" hidden>
 
-  <!-- VIEW 1: DASHBOARD -->
-  <section id="home">
-    <div class="card"><h3>Find a bib number</h3>
-      <input type="search" id="hq" inputmode="numeric" placeholder="Type a bib number, then tap it">
+  <!-- VIEW 1: HOME / DASHBOARD -->
+  <section id="home"><div id="dash"></div></section>
+
+  <!-- VIEW 2: FIND A PLAYER -->
+  <section id="find" hidden>
+    <div class="card"><h3>Find a player by bib number</h3>
+      <input type="search" id="hq" inputmode="numeric" placeholder="Type a bib number" autocomplete="off">
       <div class="sug" id="hres"></div></div>
-    <div id="dash"></div>
   </section>
 
   <!-- VIEW 3: TABLE OF ALL BIBS -->
@@ -106,7 +120,7 @@ textarea{width:100%;min-height:90px;padding:8px;border-radius:8px;border:1px sol
     <div class="tw"><table><thead><tr><th>Bib</th><th>Eval</th><th>Pos</th><th>Rd</th><th>Gr</th><th>FT</th><th>Run</th><th>Ht</th><th>Tag</th></tr></thead><tbody id="tb"></tbody></table></div>
   </section>
 
-  <!-- VIEW 2: PLAYER PROFILE -->
+  <!-- VIEW 4: PLAYER PROFILE -->
   <section id="prof" hidden></section>
 </main>
 <script src="lib/xlsx.full.min.js"></script>
@@ -152,24 +166,34 @@ function load(buf,name,tags){
 }
 
 /* ---------- navigation ---------- */
-function go(v){ curView=v; ['home','list','prof'].forEach(x=>$('#'+x).hidden=x!==v);
-  $('#t-home').classList.toggle('on',v==='home'); $('#t-list').classList.toggle('on',v==='list');
-  if(v==='home'){renderHome();hres();} if(v==='list')renderList(); window.scrollTo(0,0); }
+function go(v){ curView=v; ['home','find','list','prof'].forEach(x=>$('#'+x).hidden=x!==v);
+  ['home','find','list'].forEach(x=>$('#t-'+x).classList.toggle('on',v===x));
+  if(v==='home')renderHome(); if(v==='find')hres(); if(v==='list')renderList(); window.scrollTo(0,0); }
 function openProf(k,list){ prevView=curView==='prof'?prevView:curView; navList=list||pool().sort((a,b)=>a.bib-b.bib).map(p=>P.indexOf(p)); cur=k; renderProf(); go('prof'); }
 
-/* ---------- VIEW 1: dashboard ---------- */
+/* ---------- VIEW 2: find a player ---------- */
 function hres(){ const q=$('#hq').value.trim();
-  $('#hres').innerHTML=q?pool().filter(p=>String(p.bib).startsWith(q)).sort((a,b)=>a.bib-b.bib).slice(0,8).map(p=>`<button data-k="${P.indexOf(p)}">${p.bib}</button>`).join('')||'<span style="color:var(--mut)">No match</span>':''; }
-function renderHome(){ const L=pool(),N=L.length,done=L.filter(p=>p.e).length;
-  const cnt=f=>L.filter(f).length;
+  const m=pool().filter(p=>!q||String(p.bib).startsWith(q)).sort((a,b)=>a.bib-b.bib);
+  $('#hres').innerHTML=m.map(p=>`<button data-k="${P.indexOf(p)}">${p.bib}</button>`).join('')||'<span style="color:var(--mut)">No match</span>'; }
+
+/* ---------- VIEW 1: home / dashboard ---------- */
+const avg=a=>{a=a.filter(x=>x!=null);return a.length?a.reduce((s,x)=>s+x,0)/a.length:null;};
+const fin=h=>{ if(h==null)return '—'; let f=Math.floor(h/12),i=Math.round(h-f*12); if(i===12){f++;i=0;} return f+"'"+i+'"'; };
+function renderHome(){ const L=pool(),N=L.length,done=L.filter(p=>p.e).length, cnt=f=>L.filter(f).length;
   const bars=(items,fid)=>items.map(t=>`<div class="br" data-f="${fid}|${t.v}"><span class="bl">${esc(t.l)}</span><div class="bt"><i class="${t.c}" style="width:${N?t.n/N*100:0}%"></i></div><b>${t.n}</b></div>`).join('');
   const ev=EVAL.map((e,j)=>({l:e,v:e,c:'b'+j,n:cnt(p=>p.e===e)})).concat([{l:'Untagged',v:'_',c:'bu',n:cnt(p=>!p.e)}]);
   const ps=POS.map(x=>({l:x,v:x,c:'bx',n:cnt(p=>p.pos===x)})).concat([{l:'Untagged',v:'_',c:'bu',n:cnt(p=>!p.pos)}]);
   const rs=ROUND.map(x=>({l:'Round '+x,v:x,c:'bx',n:cnt(p=>p.rd===x)})).concat([{l:'Untagged',v:'_',c:'bu',n:cnt(p=>!p.rd)}]);
+  const fts=L.map(p=>p.ft),runs=L.map(p=>p.run),hts=L.map(p=>p.h),ages=L.map(p=>num(p.r[C.age]));
+  const n=a=>a.filter(x=>x!=null).length, f1=(v,d)=>v==null?'—':v.toFixed(d);
+  const tile=(lbl,val,a)=>`<div class="tile"><span>${lbl}</span><b>${val}</b><span>${n(a)} players with data</span></div>`;
   const pri=L.filter(p=>p.e===EVAL[0]).sort((a,b)=>a.bib-b.bib);
   $('#dash').innerHTML=
-   `<div class="card"><h3>Evaluated</h3><div class="big">${done} of ${N} players</div><div class="prog"><i style="width:${N?done/N*100:0}%"></i></div></div>
-    <div class="card"><h3>Evaluation (tap to see the list)</h3><div class="stack">${ev.map(t=>`<i class="${t.c}" style="flex:${t.n}"></i>`).join('')}</div>${bars(ev,'fe')}</div>
+   `<div class="cta"><button data-go="find">Find a player</button><button data-go="list">View table of all bibs</button></div>
+    <div class="card"><h3>Evaluated</h3><div class="big">${done} of ${N} players</div><div class="prog"><i style="width:${N?done/N*100:0}%"></i></div></div>
+    <div class="stitle" style="margin-top:6px">Pool averages</div>
+    <div class="tiles">${tile('Free throws made (of 5)',f1(avg(fts),1),fts)}${tile('Timed run',f1(avg(runs),2)+(avg(runs)==null?'':' sec'),runs)}${tile('Height',fin(avg(hts)),hts)}${tile('Age',f1(avg(ages),1),ages)}</div>
+    <div class="card"><h3>Evaluation (tap a bar to see the table)</h3><div class="stack">${ev.map(t=>`<i class="${t.c}" style="flex:${t.n}"></i>`).join('')}</div>${bars(ev,'fe')}</div>
     <div class="card"><h3>Position</h3>${bars(ps,'fp')}</div>
     <div class="card"><h3>Round</h3>${bars(rs,'fr')}</div>
     <div class="card"><h3>Priority picks</h3><div class="chips sug">${pri.map(p=>`<button data-k="${P.indexOf(p)}">${p.bib}</button>`).join('')||'<span style="color:var(--mut)">None yet</span>'}</div></div>`; }
@@ -187,33 +211,51 @@ function renderList(){ const g=id=>$('#'+id).value, q=g('q').trim().toLowerCase(
 }
 function clearFilters(){ ['q'].forEach(i=>$('#'+i).value=''); ['fe','fp','fr'].forEach(i=>$('#'+i).value=''); $('#so').value='bib'; renderList(); }
 
-/* ---------- VIEW 2: player profile ---------- */
-function renderProf(){ const p=P[cur],i=navList.indexOf(cur),L=pool();
-  const pct=(arr,v,hi)=>{const a=arr.filter(x=>x!=null);return Math.round(a.filter(x=>hi?x<v:x>v).length/a.length*100);};
-  const hs=L.map(x=>x.h).filter(x=>x!=null),rs=L.map(x=>x.run).filter(x=>x!=null);
-  const mm=a=>[Math.min(...a),Math.max(...a)];
-  const seg=(lbl,opts,val,f)=>`<h4>${lbl}</h4><div class="seg">${opts.map((o,j)=>`<button data-s="${f}|${j}" class="${val===o?'on'+(f==='e'?' e'+j:''):''}">${o}</button>`).join('')}</div>`;
-  const note=C.notes>=0&&p.r[C.notes]&&!/^#N\/A$/.test(p.r[C.notes])?`<div class="flag">Note on file: ${esc(p.r[C.notes])}</div>`:'';
-  let ft=p.ft==null?`<small>No data</small>`:`<div class="dots">${[0,1,2,3,4].map(x=>`<i class="${x<p.ft?'f':''}"></i>`).join('')}</div>`;
-  let sp='<small>No data</small>',ht='<small>No data</small>';
-  if(p.run!=null){const[a,b]=mm(rs); sp=`<div class="meter"><i style="width:${b>a?Math.max(5,(b-p.run)/(b-a)*100):50}%"></i></div><small>Faster than ${pct(rs,p.run,false)}% of the pool</small>`;}
-  if(p.h!=null){const[a,b]=mm(hs); ht=`<div class="meter"><i style="width:${b>a?Math.max(5,(p.h-a)/(b-a)*100):50}%"></i></div><small>Taller than ${pct(hs,p.h,true)}% of the pool</small>`;}
+/* ---------- VIEW 4: player profile ---------- */
+/* Histogram of the OTHER players (grey bars) with this player marked in blue.
+   vals = other players' values, v = this player's value (or null), o = options */
+function hist(vals,v,o){
+  const all=vals.concat(v==null?[]:[v]); if(!all.length)return '<small>No data in the pool</small>';
+  const nb=o.int?6:8; let mn=o.int?0:Math.min(...all), mx=o.int?6:Math.max(...all); if(mx===mn)mx=mn+1;
+  const w=(mx-mn)/nb, bin=x=>Math.max(0,Math.min(nb-1,Math.floor((x-mn)/w)));
+  const c=Array(nb).fill(0); vals.forEach(x=>c[bin(x)]++); const top=Math.max(1,...c);
+  const W=288,X0=6,bw=W/nb,Y0=58,H=48; let s=`<svg class="h" viewBox="0 0 300 92" role="img" aria-label="${esc(o.label)} compared with the pool">`;
+  c.forEach((k,i)=>{const hh=k/top*H; s+=`<rect class="${v!=null&&bin(v)===i?'hp':'hb'}" x="${(X0+i*bw+1).toFixed(1)}" y="${(Y0-hh).toFixed(1)}" width="${(bw-2).toFixed(1)}" height="${Math.max(hh,k?1:0).toFixed(1)}" rx="2"/>`;});
+  s+=`<line x1="${X0}" x2="${X0+W}" y1="${Y0}" y2="${Y0}" stroke="var(--bd)"/>`;
+  if(v!=null){ const px=X0+(o.int?(v+0.5)/6:(v-mn)/(mx-mn))*W; s+=`<line class="hm" x1="${px.toFixed(1)}" x2="${px.toFixed(1)}" y1="6" y2="${Y0}"/><circle class="hd" cx="${px.toFixed(1)}" cy="6" r="5"/>`; }
+  const tx=(x,a,t)=>`<text class="ax" x="${x}" y="72" text-anchor="${a}">${esc(t)}</text>`;
+  if(o.int){ for(let i=0;i<6;i++)s+=`<text class="ax" x="${(X0+(i+0.5)*bw).toFixed(1)}" y="72" text-anchor="middle">${i}</text>`; }
+  else s+=tx(X0,'start',o.fmt(mn))+tx(X0+W,'end',o.fmt(mx));
+  s+=`<text class="ax" x="${X0}" y="87" text-anchor="start">${esc(o.l||'')}</text><text class="ax" x="${X0+W}" y="87" text-anchor="end">${esc(o.r||'')}</text></svg>`;
+  return s; }
+
+function renderProf(){ const p=P[cur],i=navList.indexOf(cur),others=pool().filter(x=>x!==p);
+  const col=f=>others.map(f).filter(x=>x!=null);
+  const share=(arr,v,better)=>v==null||!arr.length?null:Math.round(arr.filter(x=>better(v,x)).length/arr.length*100);
+  const chart=(title,valTxt,vals,v,o,capTxt)=>{const pc=share(vals,v,o.better);
+    return `<div class="chart"><div class="row1"><span>${title}</span><span>${valTxt||'No data'}</span></div>${hist(vals,v,o)}
+      <small>${pc==null?(v==null?'No data for this player':''):capTxt+' '+pc+'% of the other players'}</small></div>`;};
   const txt=c=>c>=0&&p.r[c]!=null&&p.r[c]!==''?esc(p.r[c]):'—';
-  const hide=[C.bib,C.age,C.school,C.grade,C.eval,C.pos,C.round,C.other,C.notes,C.ft,C.run,C.height];
-  const more=headers.map((h,c)=>hide.includes(c)||p.r[c]==null||p.r[c]===''?'':`<div class="kv"><b>${esc(h)}</b><span>${esc(show(p,c))}</span></div>`).join('');
+  const nt=C.notes>=0?p.r[C.notes]:null, flag=nt!=null&&nt!==''&&!/^#N\/A$/.test(nt)?`<div class="flag">Note on file: ${esc(nt)}</div>`:'';
+  const top=[C.bib,C.age,C.school,C.grade,C.height,C.ft,C.run];
+  const mid=[...top,C.eval,C.pos,C.round,C.other,C.notes];
+  const details=headers.map((hd,c)=>mid.includes(c)||p.r[c]==null||p.r[c]===''?'':`<div class="kv"><b>${esc(hd)}</b><span>${esc(show(p,c))}</span></div>`).join('');
+  const seg=(lbl,opts,val,f)=>`<h4>${lbl}</h4><div class="seg">${opts.map((o,j)=>`<button data-s="${f}|${j}" class="${val===o?'on'+(f==='e'?' e'+j:''):''}">${o}</button>`).join('')}</div>`;
   const ev=p.e?`<span class="badge b${EVAL.indexOf(p.e)}">${p.e}</span>`:'';
   $('#prof').innerHTML=
    `<div class="pnav"><button class="btn dk" data-back>‹ Back</button><button class="btn dk" data-nav="-1">‹ Prev</button><b>${i>=0?(i+1)+' / '+navList.length:''}</b><button class="btn dk" data-nav="1">Next ›</button></div>
+    <div class="stitle" style="margin-top:6px">Player profile</div>
     <div class="card"><div class="hero">Bib ${p.bib}</div> ${ev}
-      <div class="facts">Age <b>${txt(C.age)}</b> · Grade <b>${txt(C.grade)}</b><br>School <b>${txt(C.school)}</b></div></div>
-    ${note}
-    <div class="card"><div class="ind"><div class="row1"><span>Free throws made</span><span>${p.ft==null?'':p.ft+' of 5'}</span></div>${ft}</div>
-      <div class="ind"><div class="row1"><span>Speed (timed run)</span><span>${p.run==null?'':p.run+' sec'}</span></div>${sp}</div>
-      <div class="ind"><div class="row1"><span>Height</span><span>${esc(p.r[C.height]??'')}</span></div>${ht}</div></div>
+      <div class="facts">Age <b>${txt(C.age)}</b> · Grade <b>${txt(C.grade)}</b><br>School <b>${txt(C.school)}</b></div>
+      ${chart('Height',esc(p.r[C.height]??''),col(x=>x.h),p.h,{label:'Height',fmt:fin,l:'shorter',r:'taller',better:(v,x)=>v>x},'Taller than')}
+      ${chart('Free throws made',p.ft==null?'':p.ft+' of 5',col(x=>x.ft),p.ft,{label:'Free throws made',int:1,l:'fewer made',r:'more made',better:(v,x)=>v>x},'More makes than')}
+      ${chart('Speed (timed run)',p.run==null?'':p.run+' sec',col(x=>x.run),p.run,{label:'Timed run',fmt:v=>v.toFixed(1)+' s',l:'faster',r:'slower',better:(v,x)=>v<x},'Faster than')}
+      <div class="lg"><span><i class="me"></i>This player</span><span><i></i>Other players</span></div></div>
+    <div class="stitle">Player details</div>
+    <div class="card">${flag}${details||'<span style="color:var(--mut)">No other details on file.</span>'}</div>
+    <div class="stitle">Evaluation</div>
     <div class="card">${seg('Evaluation',EVAL,p.e,'e').replace('<h4>','<h4 style="margin-top:0">')}${seg('Position',POS,p.pos,'pos')}${seg('Round',ROUND,p.rd,'rd')}
-      <h4>My notes</h4><textarea id="nt">${esc(p.n)}</textarea></div>
-    <button class="btn dk" style="width:100%" data-more>${S.more?'See less':'See more'}</button>
-    <div class="card" id="more" style="margin-top:10px" ${S.more?'':'hidden'}>${more}</div>`; }
+      <h4>My notes</h4><textarea id="nt" placeholder="Observations from the assessment">${esc(p.n)}</textarea></div>`; }
 
 function save(){ try{ const t={}; P.forEach(p=>t[p.i]={e:p.e,pos:p.pos,rd:p.rd,n:p.n});
   localStorage.setItem('dp_tags',JSON.stringify(t)); localStorage.setItem('dp_time',new Date().toLocaleTimeString()); }catch(e){} }
@@ -246,7 +288,6 @@ $('#hq').addEventListener('keydown',e=>{ if(e.key==='Enter'){const b=$('#hres bu
 document.addEventListener('click',e=>{ const t=e.target;
   let x=t.closest('[data-q]'); if(x){const[k,j]=x.dataset.q.split('|'); setTag(+k,'e',EVAL[j]); renderList(); return;}
   x=t.closest('[data-s]'); if(x){const[f,j]=x.dataset.s.split('|'); setTag(cur,f,{e:EVAL,pos:POS,rd:ROUND}[f][j]); const y=scrollY; renderProf(); scrollTo(0,y); return;}
-  if(t.closest('[data-more]')){S.more=!S.more; const y=scrollY; renderProf(); scrollTo(0,y); return;}
   if(t.closest('[data-back]')){go(prevView); return;}
   x=t.closest('[data-nav]'); if(x){const n=navList[navList.indexOf(cur)+ +x.dataset.nav]; if(n!==undefined){cur=n;renderProf();scrollTo(0,0);} return;}
   x=t.closest('[data-f]'); if(x){const[id,v]=x.dataset.f.split('|'); ['fe','fp','fr'].forEach(i=>$('#'+i).value=''); $('#q').value=''; $('#'+id).value=v; go('list'); return;}
