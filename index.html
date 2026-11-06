@@ -77,6 +77,26 @@ textarea{width:100%;min-height:90px;padding:8px;border-radius:8px;border:1px sol
 svg.h{width:100%;height:auto;display:block}
 .hb{fill:var(--un)}.hp{fill:var(--e1)}.hm{stroke:var(--e1);stroke-width:3}.hd{fill:var(--e1)}.ax{fill:var(--mut);font-size:10px}
 .lg{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:6px}.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;background:var(--un)}.lg i.me{background:var(--e1)}
+#prof .stitle{font-size:15px;margin:6px 2px 3px}
+body.pv main{padding:calc(6px + env(safe-area-inset-top)) 10px 0}
+body.pv{padding-bottom:calc(6px + env(safe-area-inset-bottom))}
+#prof .pnav .btn{min-height:40px}
+#prof .stitle small{font-weight:400;color:var(--mut);font-size:11px;margin-left:6px}
+#prof .card{padding:8px 10px;margin-bottom:6px}
+#prof .pnav{margin-bottom:2px}
+.idl{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;margin-bottom:6px}.idl .hero2{font-size:26px;font-weight:800;line-height:1.1}.idl .fact{font-size:14px;color:var(--mut)}.idl .fact b{color:var(--tx)}
+.mts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.mt{background:var(--bg);border-radius:8px;padding:6px 6px 5px;min-width:0}
+.mt .tl1{font-size:12px;color:var(--mut);display:block}.mt b{font-size:14px;display:block;line-height:1.2;margin-top:2px}.mt .tl2{font-size:11px;color:var(--mut);display:block}
+.mt svg{width:100%;height:auto;display:block}
+.lgd{font-size:11px;color:var(--mut);margin-top:5px}
+.dt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 8px;font-size:14px}.dt div{min-width:0;overflow-wrap:anywhere}.dt .wide{grid-column:1/-1}.dt span{display:block;font-size:11px;color:var(--mut)}
+#prof .flag{padding:5px 8px;margin-bottom:6px;font-size:13px}
+.rw{display:flex;gap:4px;align-items:center;margin-bottom:3px}.rw i{width:38px;font-size:12px;color:var(--mut);font-style:normal}
+.rw button{flex:1;min-height:44px;padding:0 2px;border-radius:8px;border:1px solid var(--bd);background:transparent;font-weight:700;font-size:13px}
+.rw button.on:not(.e0):not(.e1):not(.e2):not(.e3){background:var(--hd);color:#fff;border-color:var(--hd)}
+#prof textarea{min-height:44px;font-size:16px;margin-top:2px}
+@media(min-width:768px){#prof{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-items:start}#prof .pnav{grid-column:1/-1}.mt svg{max-height:90px}}
 </style>
 </head>
 <body>
@@ -166,7 +186,7 @@ function load(buf,name,tags){
 }
 
 /* ---------- navigation ---------- */
-function go(v){ curView=v; ['home','find','list','prof'].forEach(x=>$('#'+x).hidden=x!==v);
+function go(v){ curView=v; $('header').hidden=v==='prof'; document.body.classList.toggle('pv',v==='prof'); ['home','find','list','prof'].forEach(x=>$('#'+x).hidden=x!==v);
   ['home','find','list'].forEach(x=>$('#t-'+x).classList.toggle('on',v===x));
   if(v==='home')renderHome(); if(v==='find')hres(); if(v==='list')renderList(); window.scrollTo(0,0); }
 function openProf(k,list){ prevView=curView==='prof'?prevView:curView; navList=list||pool().sort((a,b)=>a.bib-b.bib).map(p=>P.indexOf(p)); cur=k; renderProf(); go('prof'); }
@@ -212,50 +232,47 @@ function renderList(){ const g=id=>$('#'+id).value, q=g('q').trim().toLowerCase(
 function clearFilters(){ ['q'].forEach(i=>$('#'+i).value=''); ['fe','fp','fr'].forEach(i=>$('#'+i).value=''); $('#so').value='bib'; renderList(); }
 
 /* ---------- VIEW 4: player profile ---------- */
-/* Histogram of the OTHER players (grey bars) with this player marked in blue.
-   vals = other players' values, v = this player's value (or null), o = options */
-function hist(vals,v,o){
-  const all=vals.concat(v==null?[]:[v]); if(!all.length)return '<small>No data in the pool</small>';
+/* Mini histogram of the OTHER players (grey bars); this player's bar and marker are blue.
+   vals = other players' values, v = this player's value (or null), o = {int:1} for 0-5 free throws */
+function mini(vals,v,o){
+  const all=vals.concat(v==null?[]:[v]); if(!all.length)return '';
   const nb=o.int?6:8; let mn=o.int?0:Math.min(...all), mx=o.int?6:Math.max(...all); if(mx===mn)mx=mn+1;
   const w=(mx-mn)/nb, bin=x=>Math.max(0,Math.min(nb-1,Math.floor((x-mn)/w)));
   const c=Array(nb).fill(0); vals.forEach(x=>c[bin(x)]++); const top=Math.max(1,...c);
-  const W=288,X0=6,bw=W/nb,Y0=58,H=48; let s=`<svg class="h" viewBox="0 0 300 92" role="img" aria-label="${esc(o.label)} compared with the pool">`;
-  c.forEach((k,i)=>{const hh=k/top*H; s+=`<rect class="${v!=null&&bin(v)===i?'hp':'hb'}" x="${(X0+i*bw+1).toFixed(1)}" y="${(Y0-hh).toFixed(1)}" width="${(bw-2).toFixed(1)}" height="${Math.max(hh,k?1:0).toFixed(1)}" rx="2"/>`;});
-  s+=`<line x1="${X0}" x2="${X0+W}" y1="${Y0}" y2="${Y0}" stroke="var(--bd)"/>`;
-  if(v!=null){ const px=X0+(o.int?(v+0.5)/6:(v-mn)/(mx-mn))*W; s+=`<line class="hm" x1="${px.toFixed(1)}" x2="${px.toFixed(1)}" y1="6" y2="${Y0}"/><circle class="hd" cx="${px.toFixed(1)}" cy="6" r="5"/>`; }
-  const tx=(x,a,t)=>`<text class="ax" x="${x}" y="72" text-anchor="${a}">${esc(t)}</text>`;
-  if(o.int){ for(let i=0;i<6;i++)s+=`<text class="ax" x="${(X0+(i+0.5)*bw).toFixed(1)}" y="72" text-anchor="middle">${i}</text>`; }
-  else s+=tx(X0,'start',o.fmt(mn))+tx(X0+W,'end',o.fmt(mx));
-  s+=`<text class="ax" x="${X0}" y="87" text-anchor="start">${esc(o.l||'')}</text><text class="ax" x="${X0+W}" y="87" text-anchor="end">${esc(o.r||'')}</text></svg>`;
-  return s; }
+  const W=96,Hh=44,Y0=41,bw=W/nb; let s=`<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="${esc(o.label)} compared with the pool">`;
+  c.forEach((k,i)=>{const hh=k/top*(Y0-8); s+=`<rect class="${v!=null&&bin(v)===i?'hp':'hb'}" x="${(i*bw+1).toFixed(1)}" y="${(Y0-hh).toFixed(1)}" width="${(bw-2).toFixed(1)}" height="${Math.max(hh,k?1:0).toFixed(1)}" rx="1.5"/>`;});
+  s+=`<line x1="0" x2="${W}" y1="${Y0}" y2="${Y0}" stroke="var(--bd)"/>`;
+  if(v!=null){ const px=(o.int?(v+0.5)/6:(v-mn)/(mx-mn))*W; s+=`<line class="hm" x1="${px.toFixed(1)}" x2="${px.toFixed(1)}" y1="4" y2="${Y0}"/><circle class="hd" cx="${px.toFixed(1)}" cy="4" r="3.2"/>`; }
+  return s+'</svg>'; }
 
 function renderProf(){ const p=P[cur],i=navList.indexOf(cur),others=pool().filter(x=>x!==p);
   const col=f=>others.map(f).filter(x=>x!=null);
   const share=(arr,v,better)=>v==null||!arr.length?null:Math.round(arr.filter(x=>better(v,x)).length/arr.length*100);
-  const chart=(title,valTxt,vals,v,o,capTxt)=>{const pc=share(vals,v,o.better);
-    return `<div class="chart"><div class="row1"><span>${title}</span><span>${valTxt||'No data'}</span></div>${hist(vals,v,o)}
-      <small>${pc==null?(v==null?'No data for this player':''):capTxt+' '+pc+'% of the other players'}</small></div>`;};
-  const txt=c=>c>=0&&p.r[c]!=null&&p.r[c]!==''?esc(p.r[c]):'—';
+  const tile=(lbl,valTxt,vals,v,o,word)=>{const pc=share(vals,v,o.better);
+    return `<div class="mt"><span class="tl1">${lbl}</span>${mini(vals,v,o)}<b>${valTxt||'No data'}</b><span class="tl2">${pc==null?'&nbsp;':word+' '+pc+'%'}</span></div>`;};
+  const txt=c=>c>=0&&p.r[c]!=null&&p.r[c]!==''?esc(p.r[c]):'\u2014';
   const nt=C.notes>=0?p.r[C.notes]:null, flag=nt!=null&&nt!==''&&!/^#N\/A$/.test(nt)?`<div class="flag">Note on file: ${esc(nt)}</div>`:'';
   const top=[C.bib,C.age,C.school,C.grade,C.height,C.ft,C.run];
   const mid=[...top,C.eval,C.pos,C.round,C.other,C.notes];
-  const details=headers.map((hd,c)=>mid.includes(c)||p.r[c]==null||p.r[c]===''?'':`<div class="kv"><b>${esc(hd)}</b><span>${esc(show(p,c))}</span></div>`).join('');
-  const seg=(lbl,opts,val,f)=>`<h4>${lbl}</h4><div class="seg">${opts.map((o,j)=>`<button data-s="${f}|${j}" class="${val===o?'on'+(f==='e'?' e'+j:''):''}">${o}</button>`).join('')}</div>`;
+  const short=t=>/zoned/i.test(t)?'Zoned school':/seasons/i.test(t)?'Seasons played':/overlap/i.test(t)?'Other sports':/skill level/i.test(t)?'Skill level':t;
+  const details=headers.map((hd,c)=>{ if(mid.includes(c)||p.r[c]==null||p.r[c]==='')return ''; const val=String(show(p,c));
+    return `<div class="${val.length>26?'wide':''}"><span>${esc(short(hd))}</span>${esc(val)}</div>`; }).join('');
+  const row=(lbl,opts,val,f,labels)=>`<div class="rw"><i>${lbl}</i>${opts.map((o,j)=>`<button data-s="${f}|${j}" class="${val===o?'on'+(f==='e'?' e'+j:''):''}">${labels?labels[j]:o}</button>`).join('')}</div>`;
   const ev=p.e?`<span class="badge b${EVAL.indexOf(p.e)}">${p.e}</span>`:'';
   $('#prof').innerHTML=
-   `<div class="pnav"><button class="btn dk" data-back>‹ Back</button><button class="btn dk" data-nav="-1">‹ Prev</button><b>${i>=0?(i+1)+' / '+navList.length:''}</b><button class="btn dk" data-nav="1">Next ›</button></div>
-    <div class="stitle" style="margin-top:6px">Player profile</div>
-    <div class="card"><div class="hero">Bib ${p.bib}</div> ${ev}
-      <div class="facts">Age <b>${txt(C.age)}</b> · Grade <b>${txt(C.grade)}</b><br>School <b>${txt(C.school)}</b></div>
-      ${chart('Height',esc(p.r[C.height]??''),col(x=>x.h),p.h,{label:'Height',fmt:fin,l:'shorter',r:'taller',better:(v,x)=>v>x},'Taller than')}
-      ${chart('Free throws made',p.ft==null?'':p.ft+' of 5',col(x=>x.ft),p.ft,{label:'Free throws made',int:1,l:'fewer made',r:'more made',better:(v,x)=>v>x},'More makes than')}
-      ${chart('Speed (timed run)',p.run==null?'':p.run+' sec',col(x=>x.run),p.run,{label:'Timed run',fmt:v=>v.toFixed(1)+' s',l:'faster',r:'slower',better:(v,x)=>v<x},'Faster than')}
-      <div class="lg"><span><i class="me"></i>This player</span><span><i></i>Other players</span></div></div>
-    <div class="stitle">Player details</div>
-    <div class="card">${flag}${details||'<span style="color:var(--mut)">No other details on file.</span>'}</div>
-    <div class="stitle">Evaluation</div>
-    <div class="card">${seg('Evaluation',EVAL,p.e,'e').replace('<h4>','<h4 style="margin-top:0">')}${seg('Position',POS,p.pos,'pos')}${seg('Round',ROUND,p.rd,'rd')}
-      <h4>My notes</h4><textarea id="nt" placeholder="Observations from the assessment">${esc(p.n)}</textarea></div>`; }
+   `<div class="pnav"><button class="btn dk" data-back>\u2039 Back</button><button class="btn dk" data-nav="-1">\u2039 Prev</button><b>${i>=0?(i+1)+' / '+navList.length:''}</b><button class="btn dk" data-nav="1">Next \u203a</button></div>
+    <div class="pl"><div class="stitle">Player profile<small>blue = this player \u00b7 % = others beaten</small></div>
+     <div class="card"><div class="idl"><span class="hero2">Bib ${p.bib}</span>${ev}<span class="fact">Age <b>${txt(C.age)}</b> \u00b7 Grade <b>${txt(C.grade)}</b> \u00b7 <b>${txt(C.school)}</b></span></div>
+      <div class="mts">
+       ${tile('Height',esc(p.r[C.height]??''),col(x=>x.h),p.h,{label:'Height',better:(v,x)=>v>x},'Taller')}
+       ${tile('Free throws',p.ft==null?'':p.ft+' of 5',col(x=>x.ft),p.ft,{label:'Free throws made',int:1,better:(v,x)=>v>x},'More')}
+       ${tile('Speed',p.run==null?'':p.run+' sec',col(x=>x.run),p.run,{label:'Timed run',better:(v,x)=>v<x},'Faster')}
+      </div></div>
+     <div class="stitle">Player details</div>
+     <div class="card">${flag}<div class="dt">${details||'<span>No other details on file.</span>'}</div></div></div>
+    <div class="pr"><div class="stitle">Evaluation</div>
+     <div class="card">${row('Eval',EVAL,p.e,'e',['Priority','Strong','Develop','Further'])}${row('Pos',POS,p.pos,'pos')}${row('Round',ROUND,p.rd,'rd')}
+      <textarea id="nt" rows="2" placeholder="My notes from the assessment">${esc(p.n)}</textarea></div></div>`; }
 
 function save(){ try{ const t={}; P.forEach(p=>t[p.i]={e:p.e,pos:p.pos,rd:p.rd,n:p.n});
   localStorage.setItem('dp_tags',JSON.stringify(t)); localStorage.setItem('dp_time',new Date().toLocaleTimeString()); }catch(e){} }
