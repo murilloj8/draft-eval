@@ -19,11 +19,12 @@ https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js
 Open it once from the home screen so it caches for offline use.
 
 ## Using it
-- **Load spreadsheet**, pick your .xlsx. The Draft Pool shows first; change the Status filter to see NL Hat Picks.
-- In the list, tap **P / S / D / F** (Priority, Strong, Development, Further) to tag instantly; tap again to clear.
-- Tap the rest of a row for details: Position, Round, Evaluation, your notes, every spreadsheet column, plus Prev/Next.
-- **Now slot** filters to the current time slot. Search by bib number or any text.
-- Work autosaves in the browser (see "saved" time). Reopening offers to restore it. **Export Excel** often.
+The app has three views, switched with the tabs at the top.
+- **Home (dashboard):** type a bib number, tap the matching button to open that player. Bars show how many players are evaluated, and the split by Evaluation, Position and Round. Tap any bar to jump to the table filtered to that group. Priority picks are listed as quick buttons.
+- **Player profile:** bib, age, grade and school as text; visual indicators for free throws made (5 dots), speed (timed run vs. the pool) and height (vs. the pool). Set Evaluation, Position, Round and your notes. **See more** shows every other spreadsheet column. Prev/Next move through the list you came from.
+- **All bibs (table):** every bib in one table with Evaluation, Position, Round, Grade, free throws, run time and height. Tap **P / S / D / F** to tag instantly (tap again to clear); tap a row to open the profile. Search, filter, sort, and **Clear all filters**.
+- Time slots are shown as just the time (e.g. 10:10 AM). The **Hat Picks** checkbox adds the 6 NL Hat Pick players to every view.
+- Work autosaves in the browser. Reopening offers to restore it. **Export Excel** often.
 
 ## How your columns are handled
 - Evaluation: read and written in place. "Development Prospect" becomes Development, "Needs Further Evaluation" becomes Further Evaluation; 0, #N/A and blank are untagged. Export writes the new wording (untagged = empty cell).

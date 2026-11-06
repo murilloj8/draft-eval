@@ -10,46 +10,62 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>10U Draft Evaluator</title>
 <style>
-:root{--bg:#f3f4f1;--card:#fff;--tx:#14181f;--mut:#5b6472;--bd:#d3d7dd;--hd:#14532d;--e0:#16a34a;--e1:#2563eb;--e2:#d97706;--e3:#6b7280}
-@media(prefers-color-scheme:dark){:root{--bg:#10140f;--card:#1b211a;--tx:#f1f4ef;--mut:#a3adb8;--bd:#33402f;--hd:#0b2a17}}
+:root{--bg:#f3f4f1;--card:#fff;--tx:#14181f;--mut:#5b6472;--bd:#d3d7dd;--hd:#14532d;--e0:#16a34a;--e1:#2563eb;--e2:#d97706;--e3:#6b7280;--un:#cbd0d8}
+@media(prefers-color-scheme:dark){:root{--bg:#10140f;--card:#1b211a;--tx:#f1f4ef;--mut:#a3adb8;--bd:#33402f;--hd:#0b2a17;--un:#3b4538}}
 *{box-sizing:border-box}
-body{margin:0;font:16px/1.35 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:env(safe-area-inset-bottom)}
-header{position:sticky;top:0;z-index:5;background:var(--hd);color:#fff;padding:calc(8px + env(safe-area-inset-top)) 10px 8px}
-.bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.bar h1{font-size:17px;margin:0 auto 0 0}
+body{margin:0;font:16px/1.35 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:calc(30px + env(safe-area-inset-bottom))}
+[hidden]{display:none!important}
 button,select,input,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:5;background:var(--hd);color:#fff;padding:calc(8px + env(safe-area-inset-top)) 10px 0}
+.bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding-bottom:8px}
+.bar h1{font-size:17px;margin:0 auto 0 0}
 .btn{min-height:42px;padding:0 12px;border-radius:8px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;font-weight:600}
 .btn.main{background:#fff;color:var(--hd)}
-.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
-.filters select,#q{min-height:42px;border-radius:8px;border:1px solid var(--bd);background:var(--card);padding:0 8px;width:100%;font-size:16px}
-#q{margin-top:8px}
-#summary{display:flex;gap:6px;padding:8px 10px;overflow-x:auto;font-size:13px}
-#summary span{white-space:nowrap;padding:3px 9px;border-radius:99px;background:var(--card);border:1px solid var(--bd)}
-#count{padding:0 10px 4px;color:var(--mut);font-size:13px}
-#empty{margin:40px 20px;text-align:center;color:var(--mut)}
-.row{display:flex;align-items:center;gap:10px;margin:0 10px 6px;padding:8px 10px;background:var(--card);border:1px solid var(--bd);border-radius:10px;min-height:58px}
-.bib{font-size:26px;font-weight:800;min-width:56px;font-variant-numeric:tabular-nums}
-.mid{flex:1;min-width:0;font-size:13px;color:var(--mut)}
-.chip{display:inline-block;padding:1px 8px;border-radius:99px;border:1px solid var(--bd);font-size:12px;margin-right:3px;color:var(--tx)}
-.chip.White{background:#fff;color:#000}.chip.Color{background:#7c3aed;color:#fff;border-color:#7c3aed}
-.q{display:flex;gap:4px}
-.q button,.seg button{min-height:42px;min-width:42px;border-radius:8px;border:1px solid var(--bd);background:transparent;font-weight:700}
+.btn.dk{border-color:var(--bd);color:var(--tx)}
+#tabs{display:flex;gap:4px;align-items:center}
+#tabs button{flex:1;min-height:44px;border:0;background:transparent;color:#fff;font-weight:700;opacity:.7;border-bottom:3px solid transparent}
+#tabs button.on{opacity:1;border-color:#fff}
+#tabs label{font-size:13px;white-space:nowrap;padding:0 6px}
+main{padding:10px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
+.card h3{margin:0 0 8px;font-size:15px}
+input[type=search],input[type=text],select{min-height:44px;border-radius:8px;border:1px solid var(--bd);background:var(--card);padding:0 10px;width:100%;font-size:16px}
+.big{font-size:20px;font-weight:700}
+.sug{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.sug button,.chips button{min-height:44px;min-width:60px;padding:0 12px;border-radius:8px;border:1px solid var(--bd);background:var(--card);font-weight:800;font-size:17px}
+.prog{height:14px;border-radius:99px;background:var(--un);overflow:hidden}.prog i{display:block;height:100%;background:var(--e0)}
+.stack{display:flex;height:26px;border-radius:8px;overflow:hidden;margin:6px 0}
+.stack i{display:block}
+.br{display:flex;align-items:center;gap:8px;min-height:36px;cursor:pointer}
+.bl{width:104px;font-size:14px}.bt{flex:1;height:16px;border-radius:99px;background:var(--un);opacity:1;overflow:hidden}.bt i{display:block;height:100%}
+.br b{min-width:28px;text-align:right}
+.b0{background:var(--e0)}.b1{background:var(--e1)}.b2{background:var(--e2)}.b3{background:var(--e3)}.bx{background:#475569}.bu{background:var(--un)}
+.badge{display:inline-block;padding:1px 8px;border-radius:6px;font-size:12px;font-weight:700;color:#fff;white-space:nowrap}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}.tools .full{grid-column:1/-1}
+#cnt{color:var(--mut);font-size:13px;margin:4px 2px}
+.tw{overflow:auto;border:1px solid var(--bd);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px;white-space:nowrap}
+th,td{padding:4px 8px;text-align:left;border-bottom:1px solid var(--bd);height:46px}
+th{position:sticky;top:0;background:var(--card);font-size:12px;color:var(--mut)}
+th:first-child,td:first-child{position:sticky;left:0;background:var(--card);font-weight:800;font-size:17px;border-right:1px solid var(--bd)}
+.qk{display:flex;gap:4px}
+.qk button,.seg button{min-height:40px;min-width:40px;border-radius:8px;border:1px solid var(--bd);background:transparent;font-weight:700}
 .on.e0{background:var(--e0);color:#fff;border-color:var(--e0)}.on.e1{background:var(--e1);color:#fff;border-color:var(--e1)}
 .on.e2{background:var(--e2);color:#fff;border-color:var(--e2)}.on.e3{background:var(--e3);color:#fff;border-color:var(--e3)}
-.seg button.on:not(.e0):not(.e1):not(.e2):not(.e3){background:var(--hd);color:#fff;border-color:var(--hd)}
-.badge{display:inline-block;padding:1px 8px;border-radius:6px;font-size:12px;font-weight:700;color:#fff;margin-right:3px}
-.b0{background:var(--e0)}.b1{background:var(--e1)}.b2{background:var(--e2)}.b3{background:var(--e3)}.bx{background:#475569}
-#sheet{position:fixed;inset:0;z-index:20;background:var(--bg);display:none;flex-direction:column}
-#sheet.open{display:flex}
-.sh{display:flex;gap:6px;align-items:center;background:var(--hd);color:#fff;padding:calc(8px + env(safe-area-inset-top)) 10px 8px}
-.sh b{flex:1;text-align:center}
-#sb{overflow:auto;padding:12px 12px calc(24px + env(safe-area-inset-bottom))}
-#sb h4{margin:14px 0 6px}
 .seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{flex:1;min-height:48px;padding:0 8px}
+.seg button.on:not(.e0):not(.e1):not(.e2):not(.e3){background:var(--hd);color:#fff;border-color:var(--hd)}
+.seg+h4,h4{margin:14px 0 6px}
+.pnav{display:flex;gap:6px;margin-bottom:8px}.pnav .btn{flex:1}.pnav b{flex:2;text-align:center;align-self:center}
+.hero{font-size:44px;font-weight:900;line-height:1}
+.facts{margin-top:6px;color:var(--mut)}.facts b{color:var(--tx)}
+.ind{margin:12px 0}.ind .row1{display:flex;justify-content:space-between;font-weight:600}.ind small{color:var(--mut);display:block;margin-top:2px}
+.dots{display:flex;gap:8px;margin:6px 0}.dots i{width:30px;height:30px;border-radius:50%;border:3px solid var(--e0)}.dots i.f{background:var(--e0)}
+.meter{height:18px;border-radius:99px;background:var(--un);overflow:hidden;margin-top:6px}.meter i{display:block;height:100%;background:var(--e1)}
+.flag{background:#fde68a;color:#451a03;border-radius:8px;padding:8px 10px;font-weight:600;margin-bottom:10px}
 textarea{width:100%;min-height:90px;padding:8px;border-radius:8px;border:1px solid var(--bd);background:var(--card)}
-.flag{background:#fde68a;color:#451a03;border-radius:8px;padding:8px 10px;font-weight:600;margin-bottom:8px}
 .kv{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:14px}
 .kv b{color:var(--mut);font-weight:500;max-width:55%}.kv span{text-align:right}
+#empty{margin:40px 20px;text-align:center;color:var(--mut)}
 </style>
 </head>
 <body>
@@ -58,26 +74,41 @@ textarea{width:100%;min-height:90px;padding:8px;border-radius:8px;border:1px sol
     <h1>10U Draft Evaluator</h1>
     <button class="btn main" id="load">Load spreadsheet</button>
     <button class="btn" id="export">Export Excel</button>
-    <button class="btn" id="clear">Clear</button>
+    <button class="btn" id="clear">Reset</button>
     <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
   </div>
-  <div id="tools" hidden>
-    <input id="q" type="search" placeholder="Search bib # or any text">
-    <div class="filters">
-      <select id="fe"></select><select id="fp"></select><select id="fr"></select>
-      <select id="ft"></select><select id="fs"></select><select id="fd"></select>
-    </div>
-    <div class="filters" style="grid-template-columns:2fr 1fr">
-      <select id="so"><option value="orig">Sort: sheet order</option><option value="bib">Sort: bib #</option><option value="time">Sort: time slot</option><option value="eval">Sort: evaluation</option></select>
-      <button class="btn" id="now" style="border-color:var(--bd);color:inherit">Now slot</button>
-    </div>
+  <div id="tabs" hidden>
+    <button data-go="home" id="t-home">Home</button>
+    <button data-go="list" id="t-list">All bibs</button>
+    <label><input type="checkbox" id="hat"> Hat Picks</label>
   </div>
 </header>
-<div id="summary"></div>
-<div id="count"></div>
 <div id="empty">Tap <b>Load spreadsheet</b> to pick your draft pool .xlsx file. Nothing leaves this device.</div>
-<div id="list"></div>
-<div id="sheet"><div class="sh"><button class="btn" data-nav="-1">‹ Prev</button><b id="st"></b><button class="btn" data-nav="1">Next ›</button><button class="btn" data-nav="x">Close</button></div><div id="sb"></div></div>
+<main id="app" hidden>
+
+  <!-- VIEW 1: DASHBOARD -->
+  <section id="home">
+    <div class="card"><h3>Find a bib number</h3>
+      <input type="search" id="hq" inputmode="numeric" placeholder="Type a bib number, then tap it">
+      <div class="sug" id="hres"></div></div>
+    <div id="dash"></div>
+  </section>
+
+  <!-- VIEW 3: TABLE OF ALL BIBS -->
+  <section id="list" hidden>
+    <div class="tools">
+      <input class="full" type="search" id="q" placeholder="Search bib # or any text">
+      <select id="fe"></select><select id="fp"></select><select id="fr"></select>
+      <select id="so"><option value="bib">Sort: bib #</option><option value="eval">Sort: evaluation</option><option value="orig">Sort: sheet order</option></select>
+      <button class="btn dk full" id="clrf">Clear all filters</button>
+    </div>
+    <div id="cnt"></div>
+    <div class="tw"><table><thead><tr><th>Bib</th><th>Eval</th><th>Pos</th><th>Rd</th><th>Gr</th><th>FT</th><th>Run</th><th>Ht</th><th>Tag</th></tr></thead><tbody id="tb"></tbody></table></div>
+  </section>
+
+  <!-- VIEW 2: PLAYER PROFILE -->
+  <section id="prof" hidden></section>
+</main>
 <script src="lib/xlsx.full.min.js"></script>
 <script>
 /* ===== SETTINGS you can change ===== */
@@ -85,64 +116,110 @@ const POS=['Center','Forward','Guard'];
 const ROUND=['1-3','4-7','8-10'];
 const EVAL=['Priority Pick','Strong Consideration','Development','Further Evaluation'];
 const EVAL_SHORT=['P','S','D','F'];                 // letters on the quick-tag buttons
-const LEGACY={'development prospect':'Development','needs further evaluation':'Further Evaluation'}; // old wording -> new
-const DEFAULT_STATUS='Draft Pool';                  // status shown first; Hat Picks hidden until you change the filter
-const NAMES={bib:'bib#',status:'draft status',time:'time slot',shirt:'shirt',eval:'evaluation',pos:'position',round:'round',notes:'notes',other:'other notes'};
+const LEGACY={'development prospect':'Development','needs further evaluation':'Further Evaluation'};
+const NAMES={bib:'bib#',status:'draft status',time:'time slot',shirt:'shirt',age:'age as of',grade:'grade',school:'school',
+  height:'height @ draft (inches)',run:'timed run',ft:'free throws (x of 5)',eval:'evaluation',pos:'position',round:'round',notes:'notes',other:'other notes'};
 /* ==================================== */
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let wb,ws,fname='',headers=[],C={},rows=[],P=[],view=[],cur=-1;
+let wb,ws,fname='',headers=[],C={},rows=[],P=[],view=[],navList=[],cur=-1,prevView='home',curView='home',S={};
 
-function tfmt(v){ if(typeof v!=='number'||v>=1) return v; const m=Math.round(v*1440),h=Math.floor(m/60)%24; return ((h+11)%12+1)+':'+String(m%60).padStart(2,'0')+(h<12?' AM':' PM'); }
-function show(p,c){ const v=p.r[c]; return c===C.time?tfmt(v):v; }
+/* Time slot -> "10:10 AM" only (no date, no time zone) */
+function tfmt(v){ if(v==null||v==='')return '';
+  let h,m; if(typeof v==='number'){ const x=Math.round((v%1)*1440); h=Math.floor(x/60)%24; m=x%60; }
+  else if(v instanceof Date){ h=v.getHours(); m=v.getMinutes(); }
+  else { const t=String(v).match(/(\d{1,2}):(\d{2})/); if(!t)return String(v); h=+t[1]; m=+t[2]; if(/pm/i.test(v)&&h<12)h+=12; }
+  return ((h+11)%12+1)+':'+String(m).padStart(2,'0')+(h<12?' AM':' PM'); }
+const show=(p,c)=>c===C.time?tfmt(p.r[c]):p.r[c];
+const num=v=>{const n=parseFloat(String(v??'').replace(/[^\d.]/g,''));return isNaN(n)?null:n;};
+function inches(v){ if(v==null||v==='')return null; if(typeof v==='number')return v>0?(v<8?v*12:v):null;
+  const m=String(v).match(/(\d+)\s*(?:'|’|ft|feet)\s*(\d+)?(?:\s+(\d+)\/(\d+))?/i); if(m)return +m[1]*12+(+m[2]||0)+(m[3]?m[3]/m[4]:0);
+  const n=num(v); return n?(n<8?n*12:n):null; }
+const pool=()=>P.filter(p=>$('#hat').checked||!p.hat);
 
 function load(buf,name,tags){
   wb=XLSX.read(buf,{type:'array',cellStyles:true}); ws=wb.Sheets[wb.SheetNames[0]]; fname=name;
   rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null,blankrows:true});
   headers=rows[0].map(h=>String(h??'').trim());
   C={}; for(const k in NAMES) C[k]=headers.findIndex(h=>h.toLowerCase()===NAMES[k]);
-  P=[]; rows.forEach((r,i)=>{ if(i===0||typeof r[C.bib]!=='number') return;
-    const ev=String(r[C.eval]??'').trim(), e=EVAL.includes(ev)?ev:(LEGACY[ev.toLowerCase()]||'');
+  P=[]; rows.forEach((r,i)=>{ if(i===0||typeof r[C.bib]!=='number')return;
+    const ev=String(r[C.eval]??'').trim(), e=EVAL.includes(ev)?ev:(LEGACY[ev.toLowerCase()]||''), run=num(r[C.run]), ft=num(r[C.ft]);
     const p={i,r,bib:r[C.bib],e,pos:POS.includes(r[C.pos])?r[C.pos]:'',rd:ROUND.includes(String(r[C.round]))?String(r[C.round]):'',n:String(r[C.other]??''),
-      slot:String(tfmt(r[C.time])??''),shirt:String(r[C.shirt]??''),status:String(r[C.status]??''),tn:typeof r[C.time]==='number'?r[C.time]:9,txt:r.join(' ').toLowerCase()};
+      hat:/hat pick/i.test(String(r[C.status]??'')),h:inches(r[C.height]),run:run>0?run:null,ft:ft==null?null:Math.min(5,ft),txt:r.join(' ').toLowerCase()};
     const t=tags&&tags[i]; if(t){p.e=t.e;p.pos=t.pos;p.rd=t.rd;p.n=t.n;} P.push(p); });
-  const opts=(id,label,arr,extra)=>$(id).innerHTML=`<option value="">${label}: all</option>`+(extra?`<option value="_">${label}: untagged</option>`:'')+arr.map(a=>`<option>${esc(a)}</option>`).join('');
-  const uniq=f=>[...new Set(P.map(f).filter(Boolean))];
-  opts('#fe','Eval',EVAL,1);opts('#fp','Position',POS,1);opts('#fr','Round',ROUND,1);
-  opts('#ft','Slot',P.slice().sort((a,b)=>a.tn-b.tn).map(p=>p.slot).filter((v,i,a)=>v&&a.indexOf(v)===i));
-  opts('#fs','Shirt',uniq(p=>p.shirt));opts('#fd','Status',uniq(p=>p.status));
-  if(uniq(p=>p.status).includes(DEFAULT_STATUS)) $('#fd').value=DEFAULT_STATUS;
-  $('#tools').hidden=false;$('#empty').style.display='none'; render();
+  const o=(id,l,a)=>$(id).innerHTML=`<option value="">${l}: all</option><option value="_">${l}: untagged</option>`+a.map(x=>`<option>${esc(x)}</option>`).join('');
+  o('#fe','Eval',EVAL);o('#fp','Position',POS);o('#fr','Round',ROUND);
+  $('#tabs').hidden=false;$('#app').hidden=false;$('#empty').style.display='none'; go('home');
 }
-function render(){
-  const g=id=>$('#'+id).value, q=g('q').trim().toLowerCase(), bad=(s,v)=>s&&(s==='_'?v:v!==s);
-  view=P.map((p,k)=>k).filter(k=>{const p=P[k];
-    if(bad(g('fe'),p.e)||bad(g('fp'),p.pos)||bad(g('fr'),p.rd))return false;
-    if(g('ft')&&p.slot!==g('ft'))return false; if(g('fs')&&p.shirt!==g('fs'))return false; if(g('fd')&&p.status!==g('fd'))return false;
-    return !q||String(p.bib).startsWith(q)||p.txt.includes(q); });
-  const ev=p=>p.e?EVAL.indexOf(p.e):9, so=g('so');
-  view.sort((a,b)=>{const A=P[a],B=P[b]; if(so==='bib')return A.bib-B.bib; if(so==='time')return A.tn-B.tn||A.bib-B.bib; if(so==='eval')return ev(A)-ev(B)||A.bib-B.bib; return a-b;});
-  $('#count').textContent=`Showing ${view.length} of ${P.length} players`;
-  $('#summary').innerHTML=EVAL.map(e=>`<span>${e.split(' ')[0]} ${P.filter(p=>p.e===e).length}</span>`).join('')+`<span>Untagged ${P.filter(p=>!p.e).length}</span>`;
-  $('#list').innerHTML=view.map(k=>{const p=P[k],j=EVAL.indexOf(p.e);
-    return `<div class="row" data-k="${k}"><div class="bib">${p.bib}</div><div class="mid"><div>${p.shirt?`<span class="chip ${esc(p.shirt)}">${esc(p.shirt)}</span>`:''}${esc(p.slot)}${p.status&&p.status!==DEFAULT_STATUS?` <span class="chip">${esc(p.status)}</span>`:''}</div>
-    <div>${p.pos?`<span class="badge bx">${p.pos}</span>`:''}${p.rd?`<span class="badge bx">Rd ${p.rd}</span>`:''}${p.e?`<span class="badge b${j}">${p.e}</span>`:''}</div></div>
-    <div class="q">${EVAL.map((e,x)=>`<button data-q="${k}|${x}" class="${p.e===e?'on e'+x:''}">${EVAL_SHORT[x]}</button>`).join('')}</div></div>`;}).join('');
+
+/* ---------- navigation ---------- */
+function go(v){ curView=v; ['home','list','prof'].forEach(x=>$('#'+x).hidden=x!==v);
+  $('#t-home').classList.toggle('on',v==='home'); $('#t-list').classList.toggle('on',v==='list');
+  if(v==='home'){renderHome();hres();} if(v==='list')renderList(); window.scrollTo(0,0); }
+function openProf(k,list){ prevView=curView==='prof'?prevView:curView; navList=list||pool().sort((a,b)=>a.bib-b.bib).map(p=>P.indexOf(p)); cur=k; renderProf(); go('prof'); }
+
+/* ---------- VIEW 1: dashboard ---------- */
+function hres(){ const q=$('#hq').value.trim();
+  $('#hres').innerHTML=q?pool().filter(p=>String(p.bib).startsWith(q)).sort((a,b)=>a.bib-b.bib).slice(0,8).map(p=>`<button data-k="${P.indexOf(p)}">${p.bib}</button>`).join('')||'<span style="color:var(--mut)">No match</span>':''; }
+function renderHome(){ const L=pool(),N=L.length,done=L.filter(p=>p.e).length;
+  const cnt=f=>L.filter(f).length;
+  const bars=(items,fid)=>items.map(t=>`<div class="br" data-f="${fid}|${t.v}"><span class="bl">${esc(t.l)}</span><div class="bt"><i class="${t.c}" style="width:${N?t.n/N*100:0}%"></i></div><b>${t.n}</b></div>`).join('');
+  const ev=EVAL.map((e,j)=>({l:e,v:e,c:'b'+j,n:cnt(p=>p.e===e)})).concat([{l:'Untagged',v:'_',c:'bu',n:cnt(p=>!p.e)}]);
+  const ps=POS.map(x=>({l:x,v:x,c:'bx',n:cnt(p=>p.pos===x)})).concat([{l:'Untagged',v:'_',c:'bu',n:cnt(p=>!p.pos)}]);
+  const rs=ROUND.map(x=>({l:'Round '+x,v:x,c:'bx',n:cnt(p=>p.rd===x)})).concat([{l:'Untagged',v:'_',c:'bu',n:cnt(p=>!p.rd)}]);
+  const pri=L.filter(p=>p.e===EVAL[0]).sort((a,b)=>a.bib-b.bib);
+  $('#dash').innerHTML=
+   `<div class="card"><h3>Evaluated</h3><div class="big">${done} of ${N} players</div><div class="prog"><i style="width:${N?done/N*100:0}%"></i></div></div>
+    <div class="card"><h3>Evaluation (tap to see the list)</h3><div class="stack">${ev.map(t=>`<i class="${t.c}" style="flex:${t.n}"></i>`).join('')}</div>${bars(ev,'fe')}</div>
+    <div class="card"><h3>Position</h3>${bars(ps,'fp')}</div>
+    <div class="card"><h3>Round</h3>${bars(rs,'fr')}</div>
+    <div class="card"><h3>Priority picks</h3><div class="chips sug">${pri.map(p=>`<button data-k="${P.indexOf(p)}">${p.bib}</button>`).join('')||'<span style="color:var(--mut)">None yet</span>'}</div></div>`; }
+
+/* ---------- VIEW 3: table of all bibs ---------- */
+function renderList(){ const g=id=>$('#'+id).value, q=g('q').trim().toLowerCase(), bad=(s,v)=>s&&(s==='_'?v:v!==s);
+  view=pool().filter(p=>!(bad(g('fe'),p.e)||bad(g('fp'),p.pos)||bad(g('fr'),p.rd))&&(!q||String(p.bib).startsWith(q)||p.txt.includes(q))).map(p=>P.indexOf(p));
+  const ev=p=>p.e?EVAL.indexOf(p.e):9,so=g('so');
+  view.sort((a,b)=>{const A=P[a],B=P[b]; if(so==='eval')return ev(A)-ev(B)||A.bib-B.bib; if(so==='orig')return a-b; return A.bib-B.bib;});
+  $('#cnt').textContent=`Showing ${view.length} of ${pool().length} players`+(localStorage.getItem('dp_time')?' · saved '+localStorage.getItem('dp_time'):'');
+  const d=v=>v==null?'':v;
+  $('#tb').innerHTML=view.map(k=>{const p=P[k],j=EVAL.indexOf(p.e);
+    return `<tr data-k="${k}"><td>${p.bib}</td><td>${p.e?`<span class="badge b${j}">${p.e.split(' ')[0]}</span>`:''}</td><td>${p.pos.slice(0,3)}</td><td>${p.rd}</td><td>${esc(d(p.r[C.grade]))}</td><td>${d(p.ft)}</td><td>${d(p.run)}</td><td>${esc(d(p.r[C.height]))}</td>
+    <td><div class="qk">${EVAL.map((e,x)=>`<button data-q="${k}|${x}" class="${p.e===e?'on e'+x:''}">${EVAL_SHORT[x]}</button>`).join('')}</div></td></tr>`;}).join('');
 }
+function clearFilters(){ ['q'].forEach(i=>$('#'+i).value=''); ['fe','fp','fr'].forEach(i=>$('#'+i).value=''); $('#so').value='bib'; renderList(); }
+
+/* ---------- VIEW 2: player profile ---------- */
+function renderProf(){ const p=P[cur],i=navList.indexOf(cur),L=pool();
+  const pct=(arr,v,hi)=>{const a=arr.filter(x=>x!=null);return Math.round(a.filter(x=>hi?x<v:x>v).length/a.length*100);};
+  const hs=L.map(x=>x.h).filter(x=>x!=null),rs=L.map(x=>x.run).filter(x=>x!=null);
+  const mm=a=>[Math.min(...a),Math.max(...a)];
+  const seg=(lbl,opts,val,f)=>`<h4>${lbl}</h4><div class="seg">${opts.map((o,j)=>`<button data-s="${f}|${j}" class="${val===o?'on'+(f==='e'?' e'+j:''):''}">${o}</button>`).join('')}</div>`;
+  const note=C.notes>=0&&p.r[C.notes]&&!/^#N\/A$/.test(p.r[C.notes])?`<div class="flag">Note on file: ${esc(p.r[C.notes])}</div>`:'';
+  let ft=p.ft==null?`<small>No data</small>`:`<div class="dots">${[0,1,2,3,4].map(x=>`<i class="${x<p.ft?'f':''}"></i>`).join('')}</div>`;
+  let sp='<small>No data</small>',ht='<small>No data</small>';
+  if(p.run!=null){const[a,b]=mm(rs); sp=`<div class="meter"><i style="width:${b>a?Math.max(5,(b-p.run)/(b-a)*100):50}%"></i></div><small>Faster than ${pct(rs,p.run,false)}% of the pool</small>`;}
+  if(p.h!=null){const[a,b]=mm(hs); ht=`<div class="meter"><i style="width:${b>a?Math.max(5,(p.h-a)/(b-a)*100):50}%"></i></div><small>Taller than ${pct(hs,p.h,true)}% of the pool</small>`;}
+  const txt=c=>c>=0&&p.r[c]!=null&&p.r[c]!==''?esc(p.r[c]):'—';
+  const hide=[C.bib,C.age,C.school,C.grade,C.eval,C.pos,C.round,C.other,C.notes,C.ft,C.run,C.height];
+  const more=headers.map((h,c)=>hide.includes(c)||p.r[c]==null||p.r[c]===''?'':`<div class="kv"><b>${esc(h)}</b><span>${esc(show(p,c))}</span></div>`).join('');
+  const ev=p.e?`<span class="badge b${EVAL.indexOf(p.e)}">${p.e}</span>`:'';
+  $('#prof').innerHTML=
+   `<div class="pnav"><button class="btn dk" data-back>‹ Back</button><button class="btn dk" data-nav="-1">‹ Prev</button><b>${i>=0?(i+1)+' / '+navList.length:''}</b><button class="btn dk" data-nav="1">Next ›</button></div>
+    <div class="card"><div class="hero">Bib ${p.bib}</div> ${ev}
+      <div class="facts">Age <b>${txt(C.age)}</b> · Grade <b>${txt(C.grade)}</b><br>School <b>${txt(C.school)}</b></div></div>
+    ${note}
+    <div class="card"><div class="ind"><div class="row1"><span>Free throws made</span><span>${p.ft==null?'':p.ft+' of 5'}</span></div>${ft}</div>
+      <div class="ind"><div class="row1"><span>Speed (timed run)</span><span>${p.run==null?'':p.run+' sec'}</span></div>${sp}</div>
+      <div class="ind"><div class="row1"><span>Height</span><span>${esc(p.r[C.height]??'')}</span></div>${ht}</div></div>
+    <div class="card">${seg('Evaluation',EVAL,p.e,'e').replace('<h4>','<h4 style="margin-top:0">')}${seg('Position',POS,p.pos,'pos')}${seg('Round',ROUND,p.rd,'rd')}
+      <h4>My notes</h4><textarea id="nt">${esc(p.n)}</textarea></div>
+    <button class="btn dk" style="width:100%" data-more>${S.more?'See less':'See more'}</button>
+    <div class="card" id="more" style="margin-top:10px" ${S.more?'':'hidden'}>${more}</div>`; }
+
 function save(){ try{ const t={}; P.forEach(p=>t[p.i]={e:p.e,pos:p.pos,rd:p.rd,n:p.n});
   localStorage.setItem('dp_tags',JSON.stringify(t)); localStorage.setItem('dp_time',new Date().toLocaleTimeString()); }catch(e){} }
 function setTag(k,f,val){ const p=P[k]; p[f]=p[f]===val?'':val; save(); }
-function openSheet(k){ cur=k; const p=P[k],i=view.indexOf(k);
-  const seg=(lbl,opts,val,f)=>`<h4>${lbl}</h4><div class="seg">${opts.map((o,j)=>`<button data-s="${f}|${j}" class="${val===o?'on'+(f==='e'?' e'+j:''):''}">${o}</button>`).join('')}</div>`;
-  const note=C.notes>=0&&p.r[C.notes]?`<div class="flag">Note on file: ${esc(p.r[C.notes])}</div>`:'';
-  const skip=[C.eval,C.pos,C.round,C.other];
-  $('#st').textContent=`Bib ${p.bib}`+(i>=0?` (${i+1}/${view.length})`:'');
-  $('#sb').innerHTML=note+seg('Evaluation',EVAL,p.e,'e')+seg('Position',POS,p.pos,'pos')+seg('Round',ROUND,p.rd,'rd')+
-   `<h4>My notes</h4><textarea id="nt">${esc(p.n)}</textarea><h4>Spreadsheet details</h4>`+
-   headers.map((h,c)=>skip.includes(c)||p.r[c]==null||p.r[c]===''?'':`<div class="kv"><b>${esc(h)}</b><span>${esc(show(p,c))}</span></div>`).join('');
-  $('#sheet').classList.add('open'); $('#sb').scrollTop=0; }
-function closeSheet(){ $('#sheet').classList.remove('open'); render(); }
 
-/* Export: edits the ORIGINAL sheet in place so times, order and extra rows stay as they were */
+/* Export edits the ORIGINAL sheet in place so times, order and extra rows stay as they were */
 function exportXlsx(){
   if(!ws)return; const cell=(r,c,v)=>{const a=XLSX.utils.encode_cell({r,c}); if(v==='')delete ws[a]; else ws[a]={t:'s',v};};
   const range=XLSX.utils.decode_range(ws['!ref']); let rc=C.round;
@@ -153,23 +230,30 @@ function exportXlsx(){
   XLSX.writeFile(wb,`draft_evaluations_${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.xlsx`);
 }
 const b64=buf=>{let s='';const u=new Uint8Array(buf);for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s);};
+
+/* ---------- events ---------- */
 $('#load').onclick=()=>{ if(!P.length||confirm('Loading a new file replaces your current work. Export first if needed. Continue?')) $('#file').click(); };
 $('#file').onchange=async e=>{ const f=e.target.files[0]; if(!f)return; const buf=await f.arrayBuffer();
   try{ localStorage.removeItem('dp_tags'); localStorage.setItem('dp_file',b64(buf)); localStorage.setItem('dp_name',f.name);}catch(x){ alert('Could not autosave this file in the browser. Export often.'); }
   load(buf,f.name); save(); e.target.value=''; };
 $('#export').onclick=exportXlsx;
 $('#clear').onclick=()=>{ if(confirm('Delete the loaded file and ALL tags from this device?')){ ['dp_file','dp_name','dp_tags','dp_time'].forEach(k=>localStorage.removeItem(k)); location.reload(); } };
-$('#now').onclick=()=>{ const n=new Date(),m=(n.getHours()*60+n.getMinutes())/1440,s=P.filter(p=>p.tn<1&&p.tn<=m).sort((a,b)=>b.tn-a.tn)[0]||P.slice().sort((a,b)=>a.tn-b.tn)[0]; if(s){$('#ft').value=s.slot;render();} };
-['q','fe','fp','fr','ft','fs','fd','so'].forEach(id=>$('#'+id).addEventListener(id==='q'?'input':'change',render));
-$('#list').onclick=e=>{ const q=e.target.closest('[data-q]'); if(q){const[k,x]=q.dataset.q.split('|'); setTag(+k,'e',EVAL[x]); render(); return;}
-  const r=e.target.closest('.row'); if(r) openSheet(+r.dataset.k); };
-$('#sheet').onclick=e=>{ const s=e.target.closest('[data-s]'),n=e.target.closest('[data-nav]');
-  if(s){const[f,x]=s.dataset.s.split('|'); setTag(cur,f==='e'?'e':f,{e:EVAL,pos:POS,rd:ROUND}[f][x]); const y=$('#sb').scrollTop; openSheet(cur); $('#sb').scrollTop=y;}
-  if(n){ if(n.dataset.nav==='x')return closeSheet(); const i=view.indexOf(cur)+ +n.dataset.nav; if(view[i]!==undefined) openSheet(view[i]); } };
-$('#sheet').oninput=e=>{ if(e.target.id==='nt'){P[cur].n=e.target.value;save();} };
-setInterval(()=>{ const t=localStorage.getItem('dp_time'); if(t)$('#count').textContent=$('#count').textContent.split(' · saved')[0]+' · saved '+t; },2000);
+$('#clrf').onclick=clearFilters;
+$('#hat').onchange=()=>go(curView==='prof'?'home':curView);
+$('#hq').addEventListener('input',hres);
+$('#hq').addEventListener('keydown',e=>{ if(e.key==='Enter'){const b=$('#hres button'); if(b)openProf(+b.dataset.k);} });
+['q','fe','fp','fr','so'].forEach(id=>$('#'+id).addEventListener(id==='q'?'input':'change',renderList));
+document.addEventListener('click',e=>{ const t=e.target;
+  let x=t.closest('[data-q]'); if(x){const[k,j]=x.dataset.q.split('|'); setTag(+k,'e',EVAL[j]); renderList(); return;}
+  x=t.closest('[data-s]'); if(x){const[f,j]=x.dataset.s.split('|'); setTag(cur,f,{e:EVAL,pos:POS,rd:ROUND}[f][j]); const y=scrollY; renderProf(); scrollTo(0,y); return;}
+  if(t.closest('[data-more]')){S.more=!S.more; const y=scrollY; renderProf(); scrollTo(0,y); return;}
+  if(t.closest('[data-back]')){go(prevView); return;}
+  x=t.closest('[data-nav]'); if(x){const n=navList[navList.indexOf(cur)+ +x.dataset.nav]; if(n!==undefined){cur=n;renderProf();scrollTo(0,0);} return;}
+  x=t.closest('[data-f]'); if(x){const[id,v]=x.dataset.f.split('|'); ['fe','fp','fr'].forEach(i=>$('#'+i).value=''); $('#q').value=''; $('#'+id).value=v; go('list'); return;}
+  x=t.closest('[data-k]'); if(x){ openProf(+x.dataset.k, curView==='list'?view.slice():null); return;}
+  x=t.closest('[data-go]'); if(x) go(x.dataset.go); });
+document.addEventListener('input',e=>{ if(e.target.id==='nt'){P[cur].n=e.target.value;save();} });
 if('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js').catch(()=>{});
-/* Restore previous session on open */
 (function(){ try{ const f=localStorage.getItem('dp_file'); if(f&&confirm('Restore your previous session ('+localStorage.getItem('dp_name')+')?')){
   const u=Uint8Array.from(atob(f),c=>c.charCodeAt(0)); load(u.buffer,localStorage.getItem('dp_name'),JSON.parse(localStorage.getItem('dp_tags')||'null')); } }catch(e){} })();
 </script>
