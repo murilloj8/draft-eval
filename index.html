@@ -84,11 +84,17 @@ body.pv{padding-bottom:calc(6px + env(safe-area-inset-bottom))}
 #prof .stitle small{font-weight:400;color:var(--mut);font-size:11px;margin-left:6px}
 #prof .card{padding:8px 10px;margin-bottom:6px}
 #prof .pnav{margin-bottom:2px}
-.idl{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;margin-bottom:6px}.idl .hero2{font-size:26px;font-weight:800;line-height:1.1}.idl .fact{font-size:14px;color:var(--mut)}.idl .fact b{color:var(--tx)}
-.mts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-.mt{background:var(--bg);border-radius:8px;padding:6px 6px 5px;min-width:0}
-.mt .tl1{font-size:12px;color:var(--mut);display:block}.mt b{font-size:14px;display:block;line-height:1.2;margin-top:2px}.mt .tl2{font-size:11px;color:var(--mut);display:block}
-.mt svg{width:100%;height:auto;display:block}
+.idl{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:2px}.idg{min-width:0}.idg .fact{display:block;margin-top:2px}
+.ov{flex:none;text-align:center;border-radius:10px;padding:3px 9px;color:#fff;min-width:62px}.ov b{display:block;font-size:28px;line-height:1.05;font-weight:800}.ov span{font-size:11px;font-weight:600}
+.ab{display:grid;grid-template-columns:94px 1fr 36px;align-items:center;gap:8px;margin-top:7px}
+.ab .l{font-size:14px;font-weight:700;line-height:1.15}.ab .l small{display:block;font-weight:400;color:var(--mut);font-size:12px}
+.trk{position:relative;height:14px;border-radius:99px;background:var(--un)}.trk i{display:block;height:100%;border-radius:99px}
+.trk u{position:absolute;left:50%;top:-3px;width:2px;height:20px;background:var(--tx);opacity:.45;border-radius:1px}
+.seg5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;height:14px}.seg5 i{border-radius:4px;background:var(--un)}
+.ab .n{font-size:21px;font-weight:800;text-align:right;line-height:1}
+.sug button.done{background:var(--e0);border-color:var(--e0);color:#fff}
+.sug button.part{border:2px solid var(--e2)}
+#hleg{margin-top:10px}.idl .hero2{font-size:26px;font-weight:800;line-height:1.1}.idl .fact{font-size:14px;color:var(--mut)}.idl .fact b{color:var(--tx)}
 .lgd{font-size:11px;color:var(--mut);margin-top:5px}
 .dt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 8px;font-size:14px}.dt div{min-width:0;overflow-wrap:anywhere}.dt .wide{grid-column:1/-1}.dt span{display:block;font-size:11px;color:var(--mut)}
 #prof .flag{padding:5px 8px;margin-bottom:6px;font-size:13px}
@@ -96,29 +102,29 @@ body.pv{padding-bottom:calc(6px + env(safe-area-inset-bottom))}
 .rw button{flex:1;min-height:44px;padding:0 2px;border-radius:8px;border:1px solid var(--bd);background:transparent;font-weight:700;font-size:13px}
 .rw button.on:not(.e0):not(.e1):not(.e2):not(.e3){background:var(--hd);color:#fff;border-color:var(--hd)}
 #prof textarea{min-height:44px;font-size:16px;margin-top:2px}
-.wch,.rw .f{display:none}
-.wr{margin:10px 0 4px}.wr .row1{display:flex;justify-content:space-between;gap:8px;font-weight:700;font-size:16px}.wr .row1 span:last-child{font-weight:600;font-size:14px;text-align:right}
-.wr svg{width:100%;height:auto;display:block;margin-top:2px}.wr .ax{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)}
+.rw .f{display:none}
 @media(min-width:768px){
  #prof{max-width:900px;margin:0 auto}
  #prof .stitle{font-size:18px;margin:12px 2px 6px}#prof .stitle small{font-size:13px}
  #prof .card{padding:12px 16px;margin-bottom:10px}
  .idl .hero2{font-size:36px}.idl .fact{font-size:18px}
- .mt .tl1{font-size:15px}.mt b{font-size:18px}.mt .tl2{font-size:13px}
+ .ov{min-width:100px;padding:6px 14px}.ov b{font-size:46px}.ov span{font-size:14px}
+ .ab{grid-template-columns:140px 1fr 60px;gap:16px;margin-top:16px}.ab .l{font-size:19px}.ab .l small{font-size:16px}.ab .n{font-size:32px}
+ .trk,.seg5{height:24px}.trk u{height:32px;top:-4px}.seg5{gap:6px}.seg5 i{border-radius:6px}
  .dt{font-size:17px;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 14px}.dt span{font-size:13px}
  .rw{gap:8px;margin-bottom:8px}.rw i{width:64px;font-size:15px}.rw button{min-height:56px;font-size:16px}
  .rw .s{display:none}.rw .f{display:inline}
  #prof textarea{min-height:110px}
  #prof .pnav .btn{min-height:46px;font-size:17px}
 }
-@media(min-width:768px) and (orientation:portrait){.mts{display:none}.wch{display:block}}
 @media(min-width:768px) and (max-height:1120px){
- .rw button{min-height:48px}.rw{margin-bottom:5px}#prof textarea{min-height:60px}
- #prof .card{padding:8px 14px;margin-bottom:6px}#prof .stitle{margin:8px 2px 4px}.wr{margin:6px 0 2px}.wr svg{max-height:48px}
+ .rw button{min-height:48px}.rw{margin-bottom:5px}#prof textarea{min-height:60px}.ab{margin-top:12px}
+ #prof .card{padding:8px 14px;margin-bottom:6px}#prof .stitle{margin:8px 2px 4px}
 }
 @media(min-width:768px) and (orientation:landscape){
- .idl .hero2{font-size:28px}.idl .fact{font-size:16px}.idl{margin-bottom:4px}
- .mt{padding:4px 8px}.mt svg{height:62px;max-height:none}.mt .hd{display:none}.mt .tl1{font-size:13px}.mt b{font-size:16px}.mt .tl2{font-size:12px}
+ .idl .hero2{font-size:28px}.idl .fact{font-size:16px}.idl{margin-bottom:0}
+ .ov{padding:2px 12px;min-width:84px}.ov b{font-size:34px}.ov span{font-size:12px}
+ .ab{margin-top:8px}.ab .l{font-size:16px}.ab .l small{font-size:13px}.ab .n{font-size:24px}.trk,.seg5{height:17px}.trk u{height:25px}
  .dt{font-size:15px;gap:2px 14px}.dt span{font-size:12px}
  .rw button{min-height:44px;font-size:15px}.rw{margin-bottom:4px}#prof textarea{min-height:44px}
  #prof .pnav .btn{min-height:40px}#prof .pnav{margin-bottom:0}
@@ -151,7 +157,7 @@ body.pv{padding-bottom:calc(6px + env(safe-area-inset-bottom))}
   <section id="find" hidden>
     <div class="card"><h3>Find a player by bib number</h3>
       <input type="search" id="hq" inputmode="numeric" placeholder="Type a bib number" autocomplete="off">
-      <div class="sug" id="hres"></div></div>
+      <div class="sug" id="hres"></div><div class="lgd" id="hleg"></div></div>
   </section>
 
   <!-- VIEW 3: TABLE OF ALL BIBS -->
@@ -220,7 +226,9 @@ function openProf(k,list){ prevView=curView==='prof'?prevView:curView; navList=l
 /* ---------- VIEW 2: find a player ---------- */
 function hres(){ const q=$('#hq').value.trim();
   const m=pool().filter(p=>!q||String(p.bib).startsWith(q)).sort((a,b)=>a.bib-b.bib);
-  $('#hres').innerHTML=m.map(p=>`<button data-k="${P.indexOf(p)}">${p.bib}</button>`).join('')||'<span style="color:var(--mut)">No match</span>'; }
+  const full=p=>p.e&&p.pos&&p.rd, some=p=>p.e||p.pos||p.rd, all=pool(), nd=all.filter(full).length;
+  $('#hres').innerHTML=m.map(p=>`<button data-k="${P.indexOf(p)}" class="${full(p)?'done':some(p)?'part':''}">${p.bib}</button>`).join('')||'<span style="color:var(--mut)">No match</span>';
+  $('#hleg').innerHTML=`<b>${nd} of ${all.length}</b> players fully evaluated (Eval, Pos and Round). <span style="color:var(--e0);font-weight:700">Green</span> = done \u00b7 <span style="color:var(--e2);font-weight:700">amber outline</span> = started \u00b7 plain = not started.`; }
 
 /* ---------- VIEW 1: home / dashboard ---------- */
 const avg=a=>{a=a.filter(x=>x!=null);return a.length?a.reduce((s,x)=>s+x,0)/a.length:null;};
@@ -258,26 +266,18 @@ function renderList(){ const g=id=>$('#'+id).value, q=g('q').trim().toLowerCase(
 function clearFilters(){ ['q'].forEach(i=>$('#'+i).value=''); ['fe','fp','fr'].forEach(i=>$('#'+i).value=''); $('#so').value='bib'; renderList(); }
 
 /* ---------- VIEW 4: player profile ---------- */
-/* Mini histogram of the OTHER players (grey bars); this player's bar and marker are blue.
-   vals = other players' values, v = this player's value (or null), o = {int:1} for 0-5 free throws */
-function mini(vals,v,o,W=96,Hh=44,nbo=8){
-  const all=vals.concat(v==null?[]:[v]); if(!all.length)return '';
-  const nb=o.int?6:nbo; let mn=o.int?0:Math.min(...all), mx=o.int?6:Math.max(...all); if(mx===mn)mx=mn+1;
-  const w=(mx-mn)/nb, bin=x=>Math.max(0,Math.min(nb-1,Math.floor((x-mn)/w)));
-  const c=Array(nb).fill(0); vals.forEach(x=>c[bin(x)]++); const top=Math.max(1,...c);
-  const Y0=Hh-3,bw=W/nb,rr=Hh>50?5:3.2; let s=`<svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none" role="img" aria-label="${esc(o.label)} compared with the pool">`;
-  c.forEach((k,i)=>{const hh=k/top*(Y0-8); s+=`<rect class="${v!=null&&bin(v)===i?'hp':'hb'}" x="${(i*bw+1).toFixed(1)}" y="${(Y0-hh).toFixed(1)}" width="${(bw-2).toFixed(1)}" height="${Math.max(hh,k?1:0).toFixed(1)}" rx="1.5"/>`;});
-  s+=`<line x1="0" x2="${W}" y1="${Y0}" y2="${Y0}" stroke="var(--bd)"/>`;
-  if(v!=null){ const px=(o.int?(v+0.5)/6:(v-mn)/(mx-mn))*W; s+=`<line class="hm" x1="${px.toFixed(1)}" x2="${px.toFixed(1)}" y1="5" y2="${Y0}"/><circle class="hd" cx="${px.toFixed(1)}" cy="5" r="${rr}"/>`; }
-  return s+'</svg>'; }
+/* Each metric becomes a 0-99 rating = % of the OTHER players this player beats.
+   Higher is ALWAYS better. Speed is inverted (a faster time earns a higher rating).
+   Overall = average of the three ratings (shown only when all three have data). */
+const tcol=r=>r>=90?'var(--e0)':r>=75?'var(--e1)':r>=50?'var(--e2)':'var(--e3)';   // green / blue / amber / grey
 
 function renderProf(){ const p=P[cur],i=navList.indexOf(cur),others=pool().filter(x=>x!==p);
   const col=f=>others.map(f).filter(x=>x!=null);
-  const share=(arr,v,better)=>v==null||!arr.length?null:Math.round(arr.filter(x=>better(v,x)).length/arr.length*100);
-  const tile=(lbl,valTxt,vals,v,o,word)=>{const pc=share(vals,v,o.better);
-    return `<div class="mt"><span class="tl1">${lbl}</span>${mini(vals,v,o)}<b>${valTxt||'No data'}</b><span class="tl2">${pc==null?'&nbsp;':word+' '+pc+'%'}</span></div>`;};
-  const wide=(lbl,valTxt,vals,v,o,word,e1,e2)=>{const pc=share(vals,v,o.better);
-    return `<div class="wr"><div class="row1"><span>${lbl}</span><span>${valTxt||'No data'}${pc==null?'':' \u00b7 '+word+' '+pc+'% of others'}</span></div>${mini(vals,v,o,600,64,o.int?6:12)}<div class="ax"><span>${e1}</span><span>${e2}</span></div></div>`;};
+  const share=(arr,v,better)=>v==null||!arr.length?null:Math.min(99,Math.round(arr.filter(x=>better(v,x)).length/arr.length*100));
+  const rH=share(col(x=>x.h),p.h,(v,x)=>v>x), rF=share(col(x=>x.ft),p.ft,(v,x)=>v>x), rS=share(col(x=>x.run),p.run,(v,x)=>v<x);
+  const ovr=[rH,rF,rS].every(x=>x!=null)?Math.round((rH+rF+rS)/3):null;
+  const bar=(lbl,sub,r)=>`<div class="ab"><div class="l">${lbl}<small>${sub||'No data'}</small></div><div class="trk">${r==null?'':`<i style="width:${Math.max(r,2)}%;background:${tcol(r)}"></i>`}<u></u></div><div class="n">${r==null?'\u2014':r}</div></div>`;
+  const segs=`<div class="ab"><div class="l">Free throws<small>${p.ft==null?'No data':p.ft+' of 5 made'}</small></div><div class="seg5" role="img" aria-label="${p.ft==null?'No data':p.ft+' of 5 free throws made'}">${[0,1,2,3,4].map(x=>`<i${p.ft!=null&&x<Math.round(p.ft)?` style="background:${tcol(rF)}"`:''}></i>`).join('')}</div><div class="n">${rF==null?'\u2014':rF}</div></div>`;
   const txt=c=>c>=0&&p.r[c]!=null&&p.r[c]!==''?esc(p.r[c]):'\u2014';
   const nt=C.notes>=0?p.r[C.notes]:null, flag=nt!=null&&nt!==''&&!/^#N\/A$/.test(nt)?`<div class="flag">Note on file: ${esc(nt)}</div>`:'';
   const top=[C.bib,C.age,C.school,C.grade,C.height,C.ft,C.run];
@@ -289,18 +289,10 @@ function renderProf(){ const p=P[cur],i=navList.indexOf(cur),others=pool().filte
   const ev=p.e?`<span class="badge b${EVAL.indexOf(p.e)}">${p.e}</span>`:'';
   $('#prof').innerHTML=
    `<div class="pnav"><button class="btn dk" data-back>\u2039 Back</button><button class="btn dk" data-nav="-1">\u2039 Prev</button><b>${i>=0?(i+1)+' / '+navList.length:''}</b><button class="btn dk" data-nav="1">Next \u203a</button></div>
-    <div class="pl"><div class="stitle">Player profile<small>blue = this player \u00b7 % = others beaten</small></div>
-     <div class="card"><div class="idl"><span class="hero2">Bib ${p.bib}</span>${ev}<span class="fact">Age <b>${txt(C.age)}</b> \u00b7 Grade <b>${txt(C.grade)}</b> \u00b7 <b>${txt(C.school)}</b></span></div>
-      <div class="mts">
-       ${tile('Height',esc(p.r[C.height]??''),col(x=>x.h),p.h,{label:'Height',better:(v,x)=>v>x},'Taller')}
-       ${tile('Free throws',p.ft==null?'':p.ft+' of 5',col(x=>x.ft),p.ft,{label:'Free throws made',int:1,better:(v,x)=>v>x},'More')}
-       ${tile('Speed',p.run==null?'':p.run+' sec',col(x=>x.run),p.run,{label:'Timed run',better:(v,x)=>v<x},'Faster')}
-      </div>
-      <div class="wch">
-       ${wide('Height',esc(p.r[C.height]??''),col(x=>x.h),p.h,{label:'Height',better:(v,x)=>v>x},'taller than','shorter','taller')}
-       ${wide('Free throws made',p.ft==null?'':p.ft+' of 5',col(x=>x.ft),p.ft,{label:'Free throws made',int:1,better:(v,x)=>v>x},'more than','0 made','5 made')}
-       ${wide('Speed (timed run)',p.run==null?'':p.run+' sec',col(x=>x.run),p.run,{label:'Timed run',better:(v,x)=>v<x},'faster than','faster','slower')}
-      </div></div>
+    <div class="pl"><div class="stitle">Player profile<small>0\u201399 rating \u00b7 fuller = better \u00b7 line = pool median</small></div>
+     <div class="card"><div class="idl"><div class="idg"><div><span class="hero2">Bib ${p.bib}</span> ${ev}</div><div class="fact">Age <b>${txt(C.age)}</b> \u00b7 Grade <b>${txt(C.grade)}</b> \u00b7 <b>${txt(C.school)}</b></div></div>
+       <div class="ov" style="background:${ovr==null?'var(--e3)':tcol(ovr)}" title="Average of the three ratings"><b>${ovr??'\u2014'}</b><span>Overall</span></div></div>
+      ${bar('Height',esc(p.r[C.height]??''),rH)}${segs}${bar('Speed',p.run==null?'':p.run+' sec',rS)}</div>
      <div class="stitle">Player details</div>
      <div class="card">${flag}<div class="dt">${details||'<span>No other details on file.</span>'}</div></div></div>
     <div class="pr"><div class="stitle">Evaluation</div>
