@@ -50,3 +50,6 @@ Import, tag a few players, export, open in Excel. Check: same row count and orde
 4. **Recommended picks** are ordered by recommended round (1-3, 4-7, 8-10), then evaluation (Priority, Strong, Development, Further), then speed 65% + free throws 35%. Untagged players go last. Labels: Steal / On target / Early compare the tag to the current round. Change the weights (`SPEED_W`, `FT_W`) at the top of the Draft section of index.html.
 5. **My roster balance** shows each of your slots colored by position and counts of Guard / Forward / Center drafted.
 6. **Export Excel** adds a **Draft Results** sheet with every pick.
+
+### Votes (stars)
+On the Draft tab tap **Load votes file** and choose a .csv or .xlsx with a **Bib** column and a **Votes** column (any header row in the first 15 lines works). Each player shows one star per vote (max 5): under the bib on iPhone, in a Votes column on iPad, and on the player profile. **★ before score** ranks by votes after round and evaluation; **Hide 0★** hides players with no votes. Votes are saved on the device and added to the Draft Results export.
