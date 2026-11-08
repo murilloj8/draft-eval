@@ -41,3 +41,12 @@ The export edits your original sheet, so values, times and row order are preserv
 
 ## Test before Sunday
 Import, tag a few players, export, open in Excel. Check: same row count and order; Time Slot still shows times; Notes unchanged; Evaluation has no stray 0s; Round column exists. Then turn on airplane mode and reopen from the home screen.
+
+
+## Draft tab (draft day)
+1. Open **Draft** and tap **Load draft board** (the snake-order .xlsx). It is saved on the device.
+2. Pick **My team** (defaults to Tempo). The banner shows the pick on the clock and how many players go before your next turn.
+3. Type the bib and tap **Draft** (or tap **Draft** on a recommended row). Already-drafted, pre-assigned, and unknown bibs are rejected. **Undo** removes the latest pick.
+4. **Recommended picks** are ordered by recommended round (1-3, 4-7, 8-10), then evaluation (Priority, Strong, Development, Further), then speed 65% + free throws 35%. Untagged players go last. Labels: Steal / On target / Early compare the tag to the current round. Change the weights (`SPEED_W`, `FT_W`) at the top of the Draft section of index.html.
+5. **My roster balance** shows each of your slots colored by position and counts of Guard / Forward / Center drafted.
+6. **Export Excel** adds a **Draft Results** sheet with every pick.

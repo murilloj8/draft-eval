@@ -96,6 +96,30 @@ body.pv{padding-bottom:calc(6px + env(safe-area-inset-bottom))}
 .sug button.part{border:2px solid var(--e2)}
 #hleg{margin-top:10px}.idl .hero2{font-size:26px;font-weight:800;line-height:1.1}.idl .fact{font-size:14px;color:var(--mut)}.idl .fact b{color:var(--tx)}
 .lgd{font-size:11px;color:var(--mut);margin-top:5px}
+.sug button.gone{opacity:.3;text-decoration:line-through}
+@media(max-width:420px){#tabs button{font-size:13px;padding:0 2px}}
+/* ---- Draft view ---- */
+.clk{display:flex;justify-content:space-between;align-items:center;gap:10px;border-radius:12px;padding:10px 12px;color:#fff;background:var(--hd);margin-bottom:10px}
+.clk.me{background:var(--e2)}.clk small{display:block;font-size:11px;opacity:.85;letter-spacing:.04em}.clk b{font-size:18px;line-height:1.2}.clk em{font-style:normal;font-size:12px;text-align:right}
+.rec{display:flex;gap:6px}.rec input{flex:1;width:0;min-width:0;min-height:44px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:22px;font-weight:700;text-align:center}
+.rec .btn{border-color:var(--bd);color:var(--tx);min-height:44px}.rec .btn.go{background:var(--hd);color:#fff;border-color:var(--hd);min-width:84px}
+.derr{color:#b91c1c;font-weight:600;font-size:13px;margin-top:6px}.dok{color:var(--e0);font-weight:600;font-size:13px;margin-top:6px}
+.sl{width:0;flex:1;min-width:0;height:44px;border-radius:8px;border:2px dashed var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--mut);font-size:11px;line-height:1.1}
+.sl b{font-size:16px;color:inherit}.sl.f{border:2px solid transparent;color:#fff}.sl.lk{border:2px solid var(--tx);color:var(--tx)}
+.slots{display:flex;gap:4px;margin-bottom:8px}
+.bal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.bal>div{background:var(--bg);border-radius:8px;padding:6px 8px}.bal b{font-size:22px;line-height:1}.bal span{font-size:12px;color:var(--mut);display:block}
+.bal .bb{height:8px;border-radius:99px;background:var(--un);margin:4px 0 2px;overflow:hidden}.bal .bb i{display:block;height:100%}
+.dh,.dr{display:flex;align-items:center;gap:6px}
+.dh{font-size:11px;color:var(--mut);padding-bottom:3px}
+.dr{padding:7px 0;border-top:1px solid var(--bd);font-size:13px}
+.c1{width:16px;flex:none;color:var(--mut)}.c2{width:42px;flex:none}.c3{width:36px;flex:none}.c4{width:40px;flex:none}.c5{flex:1;min-width:0}.c6{width:60px;flex:none}.c7{width:60px;flex:none}
+.dr .c2{font-size:18px;font-weight:800;cursor:pointer}
+.dr .c7 button{width:100%;min-height:40px;border-radius:8px;border:0;background:var(--hd);color:#fff;font-weight:700}
+.fit{display:block;width:max-content;white-space:nowrap;font-size:11px;font-weight:700;border-radius:6px;padding:1px 6px;color:#fff;margin-top:3px}
+.scb{height:7px;border-radius:99px;background:var(--un);overflow:hidden}.scb i{display:block;height:100%;background:var(--e1)}
+.dsel{display:flex;gap:8px;align-items:center;margin-bottom:10px}.dsel select{flex:1}
+@media(min-width:768px){.clk b{font-size:24px}.sl{height:56px}.sl b{font-size:20px}.dr{font-size:16px;padding:10px 0}.dr .c2{font-size:22px}.c1{width:24px}.c2{width:56px}.c3{width:48px}.c4{width:54px}.c6{width:90px}.c7{width:90px}.dh{font-size:13px}.bal b{font-size:30px}}
 .dt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 8px;font-size:14px}.dt div{min-width:0;overflow-wrap:anywhere}.dt .wide{grid-column:1/-1}.dt span{display:block;font-size:11px;color:var(--mut)}
 #prof .flag{padding:5px 8px;margin-bottom:6px;font-size:13px}
 .rw{display:flex;gap:4px;align-items:center;margin-bottom:3px}.rw i{width:38px;font-size:12px;color:var(--mut);font-style:normal}
@@ -138,12 +162,13 @@ body.pv{padding-bottom:calc(6px + env(safe-area-inset-bottom))}
     <button class="btn main" id="load">Load spreadsheet</button>
     <button class="btn" id="export">Export Excel</button>
     <button class="btn" id="clear">Reset</button>
-    <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+    <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden><input type="file" id="bfile" accept=".xlsx,.xls" hidden>
   </div>
   <div id="tabs" hidden>
     <button data-go="home" id="t-home">Home</button>
     <button data-go="find" id="t-find">Find player</button>
     <button data-go="list" id="t-list">All bibs</button>
+    <button data-go="draft" id="t-draft">Draft</button>
     <label><input type="checkbox" id="hat"> Hat Picks</label>
   </div>
 </header>
@@ -171,6 +196,9 @@ body.pv{padding-bottom:calc(6px + env(safe-area-inset-bottom))}
     <div id="cnt"></div>
     <div class="tw"><table><thead><tr><th>Bib</th><th>Eval</th><th>Pos</th><th>Rd</th><th>Gr</th><th>FT</th><th>Run</th><th>Ht</th><th>Tag</th></tr></thead><tbody id="tb"></tbody></table></div>
   </section>
+
+  <!-- VIEW 5: DRAFT -->
+  <section id="draft" hidden></section>
 
   <!-- VIEW 4: PLAYER PROFILE -->
   <section id="prof" hidden></section>
@@ -214,20 +242,20 @@ function load(buf,name,tags){
     const t=tags&&tags[i]; if(t){p.e=t.e;p.pos=t.pos;p.rd=t.rd;p.n=t.n;} P.push(p); });
   const o=(id,l,a)=>$(id).innerHTML=`<option value="">${l}: all</option><option value="_">${l}: untagged</option>`+a.map(x=>`<option>${esc(x)}</option>`).join('');
   o('#fe','Eval',EVAL);o('#fp','Position',POS);o('#fr','Round',ROUND);
-  $('#tabs').hidden=false;$('#app').hidden=false;$('#empty').style.display='none'; go('home');
+  rate(); $('#tabs').hidden=false;$('#app').hidden=false;$('#empty').style.display='none'; go('home');
 }
 
 /* ---------- navigation ---------- */
-function go(v){ curView=v; $('header').hidden=v==='prof'; document.body.classList.toggle('pv',v==='prof'); ['home','find','list','prof'].forEach(x=>$('#'+x).hidden=x!==v);
-  ['home','find','list'].forEach(x=>$('#t-'+x).classList.toggle('on',v===x));
-  if(v==='home')renderHome(); if(v==='find')hres(); if(v==='list')renderList(); window.scrollTo(0,0); }
+function go(v){ curView=v; $('header').hidden=v==='prof'; document.body.classList.toggle('pv',v==='prof'); ['home','find','list','draft','prof'].forEach(x=>$('#'+x).hidden=x!==v);
+  ['home','find','list','draft'].forEach(x=>$('#t-'+x).classList.toggle('on',v===x));
+  if(v==='home')renderHome(); if(v==='find')hres(); if(v==='list')renderList(); if(v==='draft')renderDraft(); window.scrollTo(0,0); }
 function openProf(k,list){ prevView=curView==='prof'?prevView:curView; navList=list||pool().sort((a,b)=>a.bib-b.bib).map(p=>P.indexOf(p)); cur=k; renderProf(); go('prof'); }
 
 /* ---------- VIEW 2: find a player ---------- */
 function hres(){ const q=$('#hq').value.trim();
   const m=pool().filter(p=>!q||String(p.bib).startsWith(q)).sort((a,b)=>a.bib-b.bib);
-  const full=p=>p.e&&p.pos&&p.rd, some=p=>p.e||p.pos||p.rd, all=pool(), nd=all.filter(full).length;
-  $('#hres').innerHTML=m.map(p=>`<button data-k="${P.indexOf(p)}" class="${full(p)?'done':some(p)?'part':''}">${p.bib}</button>`).join('')||'<span style="color:var(--mut)">No match</span>';
+  const full=p=>p.e&&p.pos&&p.rd, some=p=>p.e||p.pos||p.rd, all=pool(), nd=all.filter(full).length, D=drafted();
+  $('#hres').innerHTML=m.map(p=>`<button data-k="${P.indexOf(p)}" class="${full(p)?'done':some(p)?'part':''}${D[p.bib]?' gone':''}">${p.bib}</button>`).join('')||'<span style="color:var(--mut)">No match</span>';
   $('#hleg').innerHTML=`<b>${nd} of ${all.length}</b> players fully evaluated (Eval, Pos and Round). <span style="color:var(--e0);font-weight:700">Green</span> = done \u00b7 <span style="color:var(--e2);font-weight:700">amber outline</span> = started \u00b7 plain = not started.`; }
 
 /* ---------- VIEW 1: home / dashboard ---------- */
@@ -311,9 +339,105 @@ function exportXlsx(){
   P.forEach(p=>{ if(C.eval>=0)cell(p.i,C.eval,p.e); if(C.pos>=0)cell(p.i,C.pos,p.pos); cell(p.i,rc,p.rd); if(C.other>=0)cell(p.i,C.other,p.n); });
   ws['!ref']=XLSX.utils.encode_range(range); ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:range.e})};
   const d=new Date(),z=n=>String(n).padStart(2,'0');
+  if(board){ const i=wb.SheetNames.indexOf('Draft Results'); if(i>=0){wb.SheetNames.splice(i,1); delete wb.Sheets['Draft Results'];} XLSX.utils.book_append_sheet(wb,draftSheet(),'Draft Results'); }
   XLSX.writeFile(wb,`draft_evaluations_${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.xlsx`);
 }
 const b64=buf=>{let s='';const u=new Uint8Array(buf);for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s);};
+
+/* ---------- VIEW 5: DRAFT (record picks + recommendations) ---------- */
+/* ===== RANKING SETTINGS you can change ===== */
+const SPEED_W=0.65, FT_W=0.35;   // second layer: speed counts more than free throws (should add up to 1)
+const WINDOW={'1-3':[1,3],'4-7':[4,7],'8-10':[8,10]};   // draft rounds each Round tag covers
+const POSCOL={Guard:'var(--e1)',Forward:'var(--e0)',Center:'#7c3aed'};
+const MY_TEAM_DEFAULT=/tempo/i;
+/* =========================================== */
+let board=null, rec={}, myTeam='', showAll=false, dview=[], dmsg=null;
+
+/* Speed and free throw ratings (0-99, higher = better) and the combined tie-break score. A missing value counts as 50 (pool average). */
+function rate(){ const pl=P.filter(x=>!x.hat);
+  P.forEach(p=>{ const o=pl.filter(x=>x!==p), sO=o.map(x=>x.run).filter(v=>v!=null), fO=o.map(x=>x.ft).filter(v=>v!=null);
+    p.sp=p.run==null||!sO.length?null:Math.min(99,Math.round(sO.filter(x=>p.run<x).length/sO.length*100));
+    p.fr=p.ft==null||!fO.length?null:Math.min(99,Math.round(fO.filter(x=>p.ft>x).length/fO.length*100));
+    p.est=p.sp==null||p.fr==null; p.perf=Math.round(SPEED_W*(p.sp??50)+FT_W*(p.fr??50)); }); }
+
+/* Read the draft board sheet: teams across, one row pair per round (pick numbers in the row, names under it) */
+function parseBoard(rws){
+  const find=l=>rws.findIndex(r=>String(r[0]??'').trim().toLowerCase()===l), tr=find('team'), cr=find('coach');
+  if(tr<0)throw new Error('no "Team" row found');
+  const teams=[]; (rws[tr]||[]).forEach((v,c)=>{ if(c>0&&String(v??'').trim()) teams.push({col:c,team:String(v).trim(),coach:String(rws[cr]?.[c]??'').trim()}); });
+  const picks=[]; rws.forEach((r,i)=>{ const m=/^round\s*(\d+)/i.exec(String(r[0]??'')); if(!m)return;
+    teams.forEach(t=>{ const pn=r[t.col+1]; if(typeof pn!=='number')return; const b=r[t.col];
+      picks.push({pick:pn,round:+m[1],team:t.team,coach:t.coach,bib:typeof b==='number'?b:null,name:String(rws[i+1]?.[t.col]??'').trim()}); }); });
+  if(!picks.length)throw new Error('no picks found'); picks.sort((a,b)=>a.pick-b.pick);
+  return {teams:teams.map(t=>({team:t.team,coach:t.coach})),picks};
+}
+const slotBib=k=>k.bib!=null?k.bib:rec[k.pick];
+function drafted(){ const m={}; if(board)board.picks.forEach(k=>{const b=slotBib(k); if(b!=null)m[b]=k;}); return m; }
+const curPick=()=>board&&board.picks.find(k=>slotBib(k)==null);
+function saveDraft(){ try{ localStorage.setItem('dp_board',JSON.stringify(board)); localStorage.setItem('dp_rec',JSON.stringify(rec)); localStorage.setItem('dp_team',myTeam); localStorage.setItem('dp_time',new Date().toLocaleTimeString()); }catch(e){} }
+function loadDraftState(){ try{ board=JSON.parse(localStorage.getItem('dp_board')||'null'); rec=JSON.parse(localStorage.getItem('dp_rec')||'{}'); myTeam=localStorage.getItem('dp_team')||(board?(board.teams.find(t=>MY_TEAM_DEFAULT.test(t.team))||board.teams[0]).team:''); }catch(e){board=null;rec={};} }
+loadDraftState();
+
+function recordPick(bib){ const c=curPick(); if(!c){dmsg=['e','The draft is complete.'];return renderDraft();}
+  const pre=board.picks.find(k=>k.bib===bib), p=P.find(x=>x.bib===bib), d=drafted()[bib];
+  if(pre)dmsg=['e',`Bib ${bib} is already on ${pre.team}${pre.name?' ('+pre.name+')':''}.`];
+  else if(!p)dmsg=['e',`Bib ${bib} is not in the player pool.`];
+  else if(d)dmsg=['e',`Bib ${bib} was already taken at pick #${d.pick} by ${d.team}.`];
+  else if(p.hat&&!confirm(`Bib ${bib} is a Hat Pick, not part of the regular draft. Record it anyway?`))return;
+  else{ rec[c.pick]=bib; dmsg=['o',`Pick #${c.pick}: ${c.team} took Bib ${bib}.`]; saveDraft(); }
+  renderDraft(); }
+function undoPick(){ const ks=Object.keys(rec).map(Number); if(!ks.length){dmsg=['e','Nothing to undo.'];return renderDraft();}
+  const k=Math.max(...ks); const b=rec[k]; delete rec[k]; dmsg=['o',`Undid pick #${k} (Bib ${b}).`]; saveDraft(); renderDraft(); }
+
+function draftSheet(){ const aoa=[['Pick','Round','Team','Coach','Bib','Name on board','Source','Position','Recommended round','Evaluation']];
+  board.picks.forEach(k=>{ const b=slotBib(k), p=b!=null?P.find(x=>x.bib===b):null;
+    aoa.push([k.pick,k.round,k.team,k.coach,b==null?'':b,k.name||'',b==null?'':(k.bib!=null?'Pre-assigned':'Recorded'),p?p.pos:'',p?p.rd:'',p?p.e:'']); });
+  const s=XLSX.utils.aoa_to_sheet(aoa); s['!cols']=[7,7,18,12,7,22,13,10,18,20].map(w=>({wch:w})); return s; }
+
+/* Order: 1) recommended round  2) evaluation  3) speed + free throw score. Untagged goes last in each layer. */
+function ranked(avail){ return avail.slice().sort((a,b)=>{
+  const ra=a.rd?ROUND.indexOf(a.rd):9, rb=b.rd?ROUND.indexOf(b.rd):9; if(ra!==rb)return ra-rb;
+  const ea=a.e?EVAL.indexOf(a.e):9, eb=b.e?EVAL.indexOf(b.e):9; if(ea!==eb)return ea-eb;
+  return b.perf-a.perf||a.bib-b.bib; }); }
+
+function renderDraft(){ const el=$('#draft');
+  const msg=dmsg?`<div class="${dmsg[0]==='e'?'derr':'dok'}">${esc(dmsg[1])}</div>`:'';
+  if(!board){ el.innerHTML=`<div class="card"><h3>Load your draft board</h3><p style="margin:0 0 10px;color:var(--mut)">Choose the draft board .xlsx (the snake order). It stays on this device.</p><button class="btn" style="width:100%;background:var(--hd);color:#fff" data-boardfile>Load draft board</button>${msg}</div>`; return; }
+  const D=drafted(), c=curPick(), mine=board.picks.filter(k=>k.team===myTeam), avail=P.filter(p=>!p.hat&&!D[p.bib]);
+  const open=k=>slotBib(k)==null, isMe=c&&c.team===myTeam;
+  let sub=''; if(c){ const from=isMe?c.pick+1:c.pick, nx=mine.find(k=>open(k)&&k.pick>=from);
+    const gone=nx?board.picks.filter(k=>k.pick>=from&&k.pick<nx.pick&&open(k)).length:0;
+    sub=isMe?`Your pick${nx?`<br>Then #${nx.pick}, ${gone} go first`:''}`:(nx?`Your next: #${nx.pick}<br>${gone} players go first`:'No picks left for you'); }
+  /* running position balance for my team */
+  const slots=mine.map(k=>{const b=slotBib(k),pl=b!=null?P.find(x=>x.bib===b):null; return {k,b,pl,lk:k.bib!=null};});
+  const cnt={Guard:0,Forward:0,Center:0,none:0}; slots.forEach(s=>{ if(s.b==null||s.lk)return; const ps=s.pl&&s.pl.pos; if(ps&&cnt[ps]!=null)cnt[ps]++; else cnt.none++; });
+  const left=pos=>avail.filter(p=>p.pos===pos).length, got=slots.filter(s=>s.b!=null).length;
+  const slotH=slots.map(s=>{ const ps=s.pl&&s.pl.pos, lt=ps?ps[0]:'?';
+    if(s.b==null)return `<div class="sl"><b>·</b>#${s.k.pick}</div>`;
+    if(s.lk)return `<div class="sl lk" title="${esc(s.k.name)}"><b>★</b>#${s.k.pick}</div>`;
+    return `<div class="sl f" style="background:${ps?POSCOL[ps]:'var(--e3)'}"><b>${lt}</b>#${s.k.pick}</div>`; }).join('');
+  const tiles=POS.map(ps=>`<div><b>${cnt[ps]}</b> ${ps}<div class="bb"><i style="width:${slots.length?cnt[ps]/slots.length*100:0}%;background:${POSCOL[ps]}"></i></div><span>${left(ps)} left in pool</span></div>`).join('');
+  /* recommended list */
+  const rk=ranked(avail); dview=rk.map(p=>P.indexOf(p)); const top=showAll?rk:rk.slice(0,12);
+  const fit=p=>{ if(!p.rd||!c)return ''; const w=WINDOW[p.rd], r=c.round; const [t,col]=r<w[0]?['Early','var(--e3)']:r>w[1]?['Steal','var(--e2)']:['On target','var(--e0)']; return `<span class="fit" style="background:${col}">${t}</span>`; };
+  const rows=top.map((p,i)=>`<div class="dr"><span class="c1">${i+1}</span><span class="c2" data-k="${P.indexOf(p)}">${p.bib}</span><span class="c3">${p.pos?p.pos.slice(0,3):'—'}</span><span class="c4">${p.rd||'—'}</span>
+    <span class="c5">${p.e?`<span class="badge b${EVAL.indexOf(p.e)}">${p.e.split(' ')[0]}</span>`:'<span style="color:var(--mut)">Untagged</span>'}${fit(p)}</span>
+    <span class="c6"><div class="scb"><i style="width:${p.perf}%"></i></div><small>${p.perf}${p.est?'*':''}</small></span><span class="c7"><button data-pick="${p.bib}">Draft</button></span></div>`).join('');
+  const recent=Object.keys(rec).map(Number).sort((a,b)=>b-a).slice(0,6).map(n=>{const k=board.picks.find(x=>x.pick===n),p=P.find(x=>x.bib===rec[n]); return `<div class="kv"><b>#${n} · ${esc(k.team)}</b><span>Bib ${rec[n]}${p&&p.pos?' · '+p.pos:''}${p&&p.rd?' · '+p.rd:''}${p&&p.e?' · '+esc(p.e.split(' ')[0]):''}</span></div>`;}).join('');
+  const made=board.picks.filter(k=>!open(k)).length;
+  el.innerHTML=
+   `<div class="dsel"><label for="myteam" style="font-weight:700">My team</label><select id="myteam">${board.teams.map(t=>`<option${t.team===myTeam?' selected':''}>${esc(t.team)}</option>`).join('')}</select></div>
+    <div class="clk${isMe?' me':''}"><div><small>${c?(isMe?'YOUR PICK':'ON THE CLOCK'):'DRAFT'}</small><b>${c?`Pick ${c.pick} · Round ${c.round}<br>${esc(c.team)}${c.coach?' ('+esc(c.coach)+')':''}`:'Complete'}</b></div><em>${sub}</em></div>
+    <div class="card"><h3>Record the pick</h3><div class="rec"><input id="dbib" type="tel" inputmode="numeric" placeholder="Bib #" autocomplete="off"><button class="btn go" data-rec>Draft</button><button class="btn" data-undo>Undo</button></div>${msg}
+      <div class="lgd">${made} of ${board.picks.length} picks made · ${avail.length} players left</div></div>
+    <div class="card"><h3>My roster balance (${got} of ${slots.length})</h3><div class="slots">${slotH}</div><div class="bal">${tiles}</div>
+      <div class="lgd">${cnt.none?`${cnt.none} drafted without a position tag. `:''}★ = already on the board. Colors: <span style="color:var(--e1);font-weight:700">Guard</span> · <span style="color:var(--e0);font-weight:700">Forward</span> · <span style="color:#7c3aed;font-weight:700">Center</span></div></div>
+    <div class="card"><h3>Recommended picks</h3><div class="lgd" style="margin:0 0 6px">Order: recommended round, then evaluation, then speed ${Math.round(SPEED_W*100)}% + free throws ${Math.round(FT_W*100)}%.</div>
+      <div class="dh"><span class="c1">#</span><span class="c2">Bib</span><span class="c3">Pos</span><span class="c4">Round</span><span class="c5">Evaluation</span><span class="c6">Speed+FT</span><span class="c7"></span></div>
+      ${rows||'<div class="lgd">No players left.</div>'}
+      ${rk.length>12?`<button class="btn dk" style="width:100%;margin-top:8px" data-showall>${showAll?'Show top 12':'Show all '+rk.length+' remaining'}</button>`:''}
+      <div class="lgd">* No run time or free throw score on file, so the missing one counts as pool average.</div></div>
+    ${recent?`<div class="card"><h3>Recent picks</h3>${recent}</div>`:''}`; }
 
 /* ---------- events ---------- */
 $('#load').onclick=()=>{ if(!P.length||confirm('Loading a new file replaces your current work. Export first if needed. Continue?')) $('#file').click(); };
@@ -321,7 +445,7 @@ $('#file').onchange=async e=>{ const f=e.target.files[0]; if(!f)return; const bu
   try{ localStorage.removeItem('dp_tags'); localStorage.setItem('dp_file',b64(buf)); localStorage.setItem('dp_name',f.name);}catch(x){ alert('Could not autosave this file in the browser. Export often.'); }
   load(buf,f.name); save(); e.target.value=''; };
 $('#export').onclick=exportXlsx;
-$('#clear').onclick=()=>{ if(confirm('Delete the loaded file and ALL tags from this device?')){ ['dp_file','dp_name','dp_tags','dp_time'].forEach(k=>localStorage.removeItem(k)); location.reload(); } };
+$('#clear').onclick=()=>{ if(confirm('Delete the loaded file and ALL tags from this device?')){ ['dp_file','dp_name','dp_tags','dp_time','dp_board','dp_rec','dp_team'].forEach(k=>localStorage.removeItem(k)); location.reload(); } };
 $('#clrf').onclick=clearFilters;
 $('#hat').onchange=()=>go(curView==='prof'?'home':curView);
 $('#hq').addEventListener('input',hres);
@@ -333,8 +457,20 @@ document.addEventListener('click',e=>{ const t=e.target;
   if(t.closest('[data-back]')){go(prevView); return;}
   x=t.closest('[data-nav]'); if(x){const n=navList[navList.indexOf(cur)+ +x.dataset.nav]; if(n!==undefined){cur=n;renderProf();scrollTo(0,0);} return;}
   x=t.closest('[data-f]'); if(x){const[id,v]=x.dataset.f.split('|'); ['fe','fp','fr'].forEach(i=>$('#'+i).value=''); $('#q').value=''; $('#'+id).value=v; go('list'); return;}
-  x=t.closest('[data-k]'); if(x){ openProf(+x.dataset.k, curView==='list'?view.slice():null); return;}
+  x=t.closest('[data-boardfile]'); if(x){$('#bfile').click();return;}
+  x=t.closest('[data-rec]'); if(x){ const v=parseInt($('#dbib').value,10); if(isNaN(v)){dmsg=['e','Enter a bib number.'];renderDraft();} else recordPick(v); return;}
+  x=t.closest('[data-pick]'); if(x){ recordPick(+x.dataset.pick); return;}
+  x=t.closest('[data-undo]'); if(x){ undoPick(); return;}
+  x=t.closest('[data-showall]'); if(x){ showAll=!showAll; renderDraft(); return;}
+  x=t.closest('[data-k]'); if(x){ openProf(+x.dataset.k, curView==='list'?view.slice():curView==='draft'?dview.slice():null); return;}
   x=t.closest('[data-go]'); if(x) go(x.dataset.go); });
+$('#bfile').onchange=async e=>{ const f=e.target.files[0]; if(!f)return;
+  try{ const w=XLSX.read(await f.arrayBuffer(),{type:'array'}); board=parseBoard(XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{header:1,raw:true,defval:null,blankrows:true}));
+    rec={}; myTeam=(board.teams.find(t=>/tempo/i.test(t.team))||board.teams[0]).team; dmsg=['o',`Loaded ${board.picks.length} picks for ${board.teams.length} teams.`]; saveDraft(); }
+  catch(x){ board=null; dmsg=['e','Could not read that file as a draft board: '+x.message]; }
+  e.target.value=''; renderDraft(); };
+document.addEventListener('change',e=>{ if(e.target.id==='myteam'){ myTeam=e.target.value; saveDraft(); renderDraft(); } });
+document.addEventListener('keydown',e=>{ if(e.target.id==='dbib'&&e.key==='Enter'){ const v=parseInt(e.target.value,10); if(!isNaN(v))recordPick(v);} });
 document.addEventListener('input',e=>{ if(e.target.id==='nt'){P[cur].n=e.target.value;save();} });
 if('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js').catch(()=>{});
 (function(){ try{ const f=localStorage.getItem('dp_file'); if(f&&confirm('Restore your previous session ('+localStorage.getItem('dp_name')+')?')){
