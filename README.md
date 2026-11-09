@@ -59,3 +59,6 @@ On the Draft tab, **Export draft board (.xlsx)** downloads your original board f
 
 ### If the app looks out of date
 The app updates itself when you are online: reload once or twice (or close and reopen it) after uploading new files. The Draft screen shows "App version" at the bottom of the recommended list; it should match the latest release (11). On iPhone, if it still looks old: Settings > Safari > Advanced > Website Data, remove the site, then reload. Recorded picks are stored with the site data, so export the board first.
+
+### Import a draft board (any time)
+The Draft screen always shows **Import draft board** (or **Load draft board** the first time) next to **Load votes file**. You can re-import a fresh board, or a board you exported earlier: bibs already filled in for players in the pool are imported as recorded picks, and picks you already recorded here are kept.

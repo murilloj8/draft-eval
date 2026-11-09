@@ -435,7 +435,7 @@ function ranked(avail){ return avail.slice().sort((a,b)=>{
 
 function renderDraft(){ const el=$('#draft');
   const msg=dmsg?`<div class="${dmsg[0]==='e'?'derr':'dok'}">${esc(dmsg[1])}</div>`:'';
-  const nv=Object.keys(votes).length, vbar=`<div class="vbar"><button class="btn" data-votefile>Load votes file</button><span class="lgd" style="margin:0">${nv?nv+' players with votes loaded':'Optional: CSV or Excel with Bib and Votes columns'}</span></div>`;
+  const nv=Object.keys(votes).length, vbar=`<div class="vbar"><button class="btn" data-boardfile>${board?'Import draft board':'Load draft board'}</button><button class="btn" data-votefile>Load votes file</button><span class="lgd" style="margin:0;flex-basis:100%">${nv?nv+' players with votes loaded':'Optional: CSV or Excel with Bib and Votes columns'}</span></div>`;
   if(!board){ el.innerHTML=vbar+`<div class="card"><h3>Load your draft board</h3><p style="margin:0 0 10px;color:var(--mut)">Choose the draft board .xlsx (the snake order). It stays on this device.</p><button class="btn" style="width:100%;background:var(--hd);color:#fff" data-boardfile>Load draft board</button>${msg}</div>`; return; }
   const D=drafted(), c=curPick(), mine=board.picks.filter(k=>k.team===myTeam), avail=P.filter(p=>!p.hat&&!D[p.bib]);
   const open=k=>slotBib(k)==null, isMe=c&&c.team===myTeam;
@@ -470,7 +470,7 @@ function renderDraft(){ const el=$('#draft');
       <div class="dh"><span class="c1">#</span><span class="c2">Bib</span><span class="c3">Pos</span><span class="c4">Round</span><span class="c5">Evaluation</span>${Object.keys(votes).length?'<span class="c8">Votes</span>':''}<span class="c6">Speed+FT</span><span class="c7"></span></div>
       ${rows||'<div class="lgd">No players left.</div>'}
       ${rk.length>12?`<button class="btn dk" style="width:100%;margin-top:8px" data-showall>${showAll?'Show top 12':'Show all '+rk.length+' remaining'}</button>`:''}
-      <div class="lgd">App version 11 \u00b7 if this number is lower, close and reopen the app.</div>
+      <div class="lgd">App version 12 \u00b7 if this number is lower, close and reopen the app.</div>
       <div class="lgd">* No run time or free throw score on file, so the missing one counts as pool average.</div></div>
     ${recent?`<div class="card"><h3>Recent picks</h3>${recent}</div>`:''}`; }
 
@@ -511,7 +511,7 @@ $('#vfile').onchange=async e=>{ const f=e.target.files[0]; if(!f)return;
   e.target.value=''; renderDraft(); };
 $('#bfile').onchange=async e=>{ const f=e.target.files[0]; if(!f)return;
   try{ const bf=await f.arrayBuffer(); const w=XLSX.read(bf,{type:'array'}); boardB64=b64(bf); try{localStorage.setItem('dp_boardfile',boardB64);}catch(x){} board=parseBoard(XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{header:1,raw:true,defval:null,blankrows:true}));
-    const old=rec; rec={}; board.picks.forEach(k=>{ if(k.bib==null&&old[k.pick]!=null)rec[k.pick]=old[k.pick]; }); if(!board.teams.some(t=>t.team===myTeam))myTeam=(board.teams.find(t=>/tempo/i.test(t.team))||board.teams[0]).team; dmsg=['o',`Loaded ${board.picks.length} picks for ${board.teams.length} teams. Kept ${Object.keys(rec).length} recorded picks.`]; saveDraft(); }
+    const old=rec; rec={}; let imp=0; board.picks.forEach(k=>{ if(k.bib!=null&&P.some(p=>p.bib===k.bib)){ rec[k.pick]=k.bib; k.bib=null; imp++; } else if(k.bib==null&&old[k.pick]!=null)rec[k.pick]=old[k.pick]; }); if(!board.teams.some(t=>t.team===myTeam))myTeam=(board.teams.find(t=>/tempo/i.test(t.team))||board.teams[0]).team; dmsg=['o',`Loaded ${board.picks.length} picks for ${board.teams.length} teams. ${Object.keys(rec).length} recorded picks in place${imp?` (${imp} imported from the board)`:''}.`]; saveDraft(); }
   catch(x){ board=null; dmsg=['e','Could not read that file as a draft board: '+x.message]; }
   e.target.value=''; renderDraft(); };
 document.addEventListener('change',e=>{ if(e.target.id==='myteam'){ myTeam=e.target.value; saveDraft(); renderDraft(); } });
