@@ -404,12 +404,22 @@ function undoPick(){ const ks=Object.keys(rec).map(Number); if(!ks.length){dmsg=
   const k=Math.max(...ks); const b=rec[k]; delete rec[k]; dmsg=['o',`Undid pick #${k} (Bib ${b}).`]; saveDraft(); renderDraft(); }
 
 function exportBoard(){
-  if(!board||!boardB64){dmsg=['e','Reload the draft board file once (Load draft board) to enable board export.'];return renderDraft();}
+  if(!board)return;
+  const stamp=new Date().toLocaleDateString('en-CA');
+  if(!boardB64||board.picks.some(k=>k.r==null)){ /* original file not saved on this device: rebuild the board in the same layout */
+    const T=board.teams, rounds=[...new Set(board.picks.map(k=>k.round))].sort((a,b)=>a-b), W=1+T.length*2, blank=()=>Array(W).fill(null), aoa=[];
+    const row=(lab)=>{const r=blank(); r[0]=lab; return r;};
+    const t0=blank(); t0[0]='2026 Junior NL Draft \u2013 Snake'; aoa.push(t0,blank(),blank());
+    const hn=row('#'),hm=row('Team'),hc=row('Coach'); T.forEach((t,i)=>{hn[1+i*2]=i+1; hm[1+i*2]=t.team; hc[1+i*2]=t.coach;}); aoa.push(hn,hm,hc);
+    let n=0; rounds.forEach(rd=>{ const a=row('Round '+rd), b=blank(); board.picks.filter(k=>k.round===rd).forEach(k=>{ const i=T.findIndex(t=>t.team===k.team), c=1+i*2, bib=slotBib(k), p=bib!=null?P.find(x=>x.bib===bib):null;
+        a[c+1]=k.pick; a[c]=bib!=null?bib:null; b[c]=k.bib!=null?k.name:(bib!=null?'Bib '+bib+(p&&p.pos?' \u00b7 '+p.pos:''):null); if(k.bib==null&&bib!=null)n++; }); aoa.push(a,b); });
+    const s=XLSX.utils.aoa_to_sheet(aoa), wb=XLSX.utils.book_new(); s['!cols']=Array.from({length:W},(_,i)=>({wch:i%2?20:6})); XLSX.utils.book_append_sheet(wb,s,'Draft Board');
+    XLSX.writeFile(wb,`draft_board_updated_${stamp}.xlsx`); dmsg=['o',`Exported the board with ${n} recorded picks filled in.`]; return renderDraft(); }
   const w=XLSX.read(boardB64,{type:'base64'}), ws=w.Sheets[w.SheetNames[0]]; let n=0;
   board.picks.forEach(k=>{ const b=rec[k.pick]; if(b==null||k.bib!=null)return; const p=P.find(x=>x.bib===b);
     ws[XLSX.utils.encode_cell({r:k.r,c:k.c})]={t:'n',v:b};
     ws[XLSX.utils.encode_cell({r:k.r+1,c:k.c})]={t:'s',v:'Bib '+b+(p&&p.pos?' \u00b7 '+p.pos:'')}; n++; });
-  XLSX.writeFile(w,`draft_board_updated_${new Date().toLocaleDateString('en-CA')}.xlsx`);
+  XLSX.writeFile(w,`draft_board_updated_${stamp}.xlsx`);
   dmsg=['o',`Exported the board with ${n} recorded picks filled in.`]; renderDraft(); }
 function draftSheet(){ const aoa=[['Pick','Round','Team','Coach','Bib','Name on board','Source','Position','Recommended round','Evaluation','Votes']];
   board.picks.forEach(k=>{ const b=slotBib(k), p=b!=null?P.find(x=>x.bib===b):null;
@@ -500,7 +510,7 @@ $('#vfile').onchange=async e=>{ const f=e.target.files[0]; if(!f)return;
   e.target.value=''; renderDraft(); };
 $('#bfile').onchange=async e=>{ const f=e.target.files[0]; if(!f)return;
   try{ const bf=await f.arrayBuffer(); const w=XLSX.read(bf,{type:'array'}); boardB64=b64(bf); try{localStorage.setItem('dp_boardfile',boardB64);}catch(x){} board=parseBoard(XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{header:1,raw:true,defval:null,blankrows:true}));
-    rec={}; myTeam=(board.teams.find(t=>/tempo/i.test(t.team))||board.teams[0]).team; dmsg=['o',`Loaded ${board.picks.length} picks for ${board.teams.length} teams.`]; saveDraft(); }
+    const old=rec; rec={}; board.picks.forEach(k=>{ if(k.bib==null&&old[k.pick]!=null)rec[k.pick]=old[k.pick]; }); if(!board.teams.some(t=>t.team===myTeam))myTeam=(board.teams.find(t=>/tempo/i.test(t.team))||board.teams[0]).team; dmsg=['o',`Loaded ${board.picks.length} picks for ${board.teams.length} teams. Kept ${Object.keys(rec).length} recorded picks.`]; saveDraft(); }
   catch(x){ board=null; dmsg=['e','Could not read that file as a draft board: '+x.message]; }
   e.target.value=''; renderDraft(); };
 document.addEventListener('change',e=>{ if(e.target.id==='myteam'){ myTeam=e.target.value; saveDraft(); renderDraft(); } });
