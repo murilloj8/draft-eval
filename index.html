@@ -470,6 +470,7 @@ function renderDraft(){ const el=$('#draft');
       <div class="dh"><span class="c1">#</span><span class="c2">Bib</span><span class="c3">Pos</span><span class="c4">Round</span><span class="c5">Evaluation</span>${Object.keys(votes).length?'<span class="c8">Votes</span>':''}<span class="c6">Speed+FT</span><span class="c7"></span></div>
       ${rows||'<div class="lgd">No players left.</div>'}
       ${rk.length>12?`<button class="btn dk" style="width:100%;margin-top:8px" data-showall>${showAll?'Show top 12':'Show all '+rk.length+' remaining'}</button>`:''}
+      <div class="lgd">App version 11 \u00b7 if this number is lower, close and reopen the app.</div>
       <div class="lgd">* No run time or free throw score on file, so the missing one counts as pool average.</div></div>
     ${recent?`<div class="card"><h3>Recent picks</h3>${recent}</div>`:''}`; }
 
@@ -516,7 +517,8 @@ $('#bfile').onchange=async e=>{ const f=e.target.files[0]; if(!f)return;
 document.addEventListener('change',e=>{ if(e.target.id==='myteam'){ myTeam=e.target.value; saveDraft(); renderDraft(); } });
 document.addEventListener('keydown',e=>{ if(e.target.id==='dbib'&&e.key==='Enter'){ const v=parseInt(e.target.value,10); if(!isNaN(v))recordPick(v);} });
 document.addEventListener('input',e=>{ if(e.target.id==='nt'){P[cur].n=e.target.value;save();} });
-if('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+if('serviceWorker' in navigator){ const had=!!navigator.serviceWorker.controller; navigator.serviceWorker.register('service-worker.js').then(r=>r.update()).catch(()=>{});
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(had&&!window.__rl){window.__rl=1;location.reload();} }); }
 (function(){ try{ const f=localStorage.getItem('dp_file'); if(f&&confirm('Restore your previous session ('+localStorage.getItem('dp_name')+')?')){
   const u=Uint8Array.from(atob(f),c=>c.charCodeAt(0)); load(u.buffer,localStorage.getItem('dp_name'),JSON.parse(localStorage.getItem('dp_tags')||'null')); } }catch(e){} })();
 </script>

@@ -56,3 +56,6 @@ On the Draft tab tap **Load votes file** and choose a .csv or .xlsx with a **Bib
 
 ### Export the draft board
 On the Draft tab, **Export draft board (.xlsx)** downloads your original board file with every recorded pick filled in: the bib goes in the pick's cell and "Bib N · Position" in the name row beneath it. Pre-assigned picks are left as they were. If the original board file isn't saved on this device (you loaded it before this update), the app rebuilds the board in the same layout instead, so no reload is needed. Reloading the board file keeps the picks you already recorded. Note: Excel colors/fills from the original are not preserved by the browser export library; values and layout are.
+
+### If the app looks out of date
+The app updates itself when you are online: reload once or twice (or close and reopen it) after uploading new files. The Draft screen shows "App version" at the bottom of the recommended list; it should match the latest release (11). On iPhone, if it still looks old: Settings > Safari > Advanced > Website Data, remove the site, then reload. Recorded picks are stored with the site data, so export the board first.
