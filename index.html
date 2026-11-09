@@ -363,6 +363,8 @@ function parseVotes(rws){ let hr=-1,bc=-1,vc=-1;
   if(hr<0)throw new Error('need a Bib column and a Votes column');
   const m={}; rws.slice(hr+1).forEach(r=>{ const b=parseInt(r[bc],10), v=parseInt(r[vc],10); if(!isNaN(b)&&!isNaN(v))m[b]=v; });
   if(!Object.keys(m).length)throw new Error('no vote rows found'); return m; }
+let boardB64=null;
+try{boardB64=localStorage.getItem('dp_boardfile')}catch(e){}
 let board=null, rec={}, myTeam='', showAll=false, dview=[], dmsg=null;
 
 /* Speed and free throw ratings (0-99, higher = better) and the combined tie-break score. A missing value counts as 50 (pool average). */
@@ -379,7 +381,7 @@ function parseBoard(rws){
   const teams=[]; (rws[tr]||[]).forEach((v,c)=>{ if(c>0&&String(v??'').trim()) teams.push({col:c,team:String(v).trim(),coach:String(rws[cr]?.[c]??'').trim()}); });
   const picks=[]; rws.forEach((r,i)=>{ const m=/^round\s*(\d+)/i.exec(String(r[0]??'')); if(!m)return;
     teams.forEach(t=>{ const pn=r[t.col+1]; if(typeof pn!=='number')return; const b=r[t.col];
-      picks.push({pick:pn,round:+m[1],team:t.team,coach:t.coach,bib:typeof b==='number'?b:null,name:String(rws[i+1]?.[t.col]??'').trim()}); }); });
+      picks.push({r:i,c:t.col,pick:pn,round:+m[1],team:t.team,coach:t.coach,bib:typeof b==='number'?b:null,name:String(rws[i+1]?.[t.col]??'').trim()}); }); });
   if(!picks.length)throw new Error('no picks found'); picks.sort((a,b)=>a.pick-b.pick);
   return {teams:teams.map(t=>({team:t.team,coach:t.coach})),picks};
 }
@@ -401,6 +403,14 @@ function recordPick(bib){ const c=curPick(); if(!c){dmsg=['e','The draft is comp
 function undoPick(){ const ks=Object.keys(rec).map(Number); if(!ks.length){dmsg=['e','Nothing to undo.'];return renderDraft();}
   const k=Math.max(...ks); const b=rec[k]; delete rec[k]; dmsg=['o',`Undid pick #${k} (Bib ${b}).`]; saveDraft(); renderDraft(); }
 
+function exportBoard(){
+  if(!board||!boardB64){dmsg=['e','Reload the draft board file once (Load draft board) to enable board export.'];return renderDraft();}
+  const w=XLSX.read(boardB64,{type:'base64'}), ws=w.Sheets[w.SheetNames[0]]; let n=0;
+  board.picks.forEach(k=>{ const b=rec[k.pick]; if(b==null||k.bib!=null)return; const p=P.find(x=>x.bib===b);
+    ws[XLSX.utils.encode_cell({r:k.r,c:k.c})]={t:'n',v:b};
+    ws[XLSX.utils.encode_cell({r:k.r+1,c:k.c})]={t:'s',v:'Bib '+b+(p&&p.pos?' \u00b7 '+p.pos:'')}; n++; });
+  XLSX.writeFile(w,`draft_board_updated_${new Date().toLocaleDateString('en-CA')}.xlsx`);
+  dmsg=['o',`Exported the board with ${n} recorded picks filled in.`]; renderDraft(); }
 function draftSheet(){ const aoa=[['Pick','Round','Team','Coach','Bib','Name on board','Source','Position','Recommended round','Evaluation','Votes']];
   board.picks.forEach(k=>{ const b=slotBib(k), p=b!=null?P.find(x=>x.bib===b):null;
     aoa.push([k.pick,k.round,k.team,k.coach,b==null?'':b,k.name||'',b==null?'':(k.bib!=null?'Pre-assigned':'Recorded'),p?p.pos:'',p?p.rd:'',p?p.e:'',b==null?'':(votes[b]||0)]); });
@@ -443,7 +453,7 @@ function renderDraft(){ const el=$('#draft');
    `<div class="dsel"><label for="myteam" style="font-weight:700">My team</label><select id="myteam">${board.teams.map(t=>`<option${t.team===myTeam?' selected':''}>${esc(t.team)}</option>`).join('')}</select></div>
     <div class="clk${isMe?' me':''}"><div><small>${c?(isMe?'YOUR PICK':'ON THE CLOCK'):'DRAFT'}</small><b>${c?`Pick ${c.pick} · Round ${c.round}<br>${esc(c.team)}${c.coach?' ('+esc(c.coach)+')':''}`:'Complete'}</b></div><em>${sub}</em></div>
     <div class="card"><h3>Record the pick</h3><div class="rec"><input id="dbib" type="tel" inputmode="numeric" placeholder="Bib #" autocomplete="off"><button class="btn go" data-rec>Draft</button><button class="btn" data-undo>Undo</button></div>${msg}
-      <div class="lgd">${made} of ${board.picks.length} picks made · ${avail.length} players left</div></div>
+      <button class="btn dk" style="width:100%;margin-top:8px" data-expboard>Export draft board (.xlsx)</button><div class="lgd">${made} of ${board.picks.length} picks made · ${avail.length} players left</div></div>
     <div class="card"><h3>My roster balance (${got} of ${slots.length})</h3><div class="slots">${slotH}</div><div class="bal">${tiles}</div>
       <div class="lgd">${cnt.none?`${cnt.none} drafted without a position tag. `:''}★ = already on the board. Colors: <span style="color:var(--e1);font-weight:700">Guard</span> · <span style="color:var(--e0);font-weight:700">Forward</span> · <span style="color:#7c3aed;font-weight:700">Center</span></div></div>
     <div class="card"><h3>Recommended picks</h3>${Object.keys(votes).length?`<div class="chips"><button data-vsort class="${vsort?'on':''}">\u2605 before score</button><button data-vhide class="${vhide?'on':''}">Hide 0\u2605</button></div>`:''}<div class="lgd" style="margin:0 0 6px">Order: recommended round, then evaluation, ${vsort?'then votes, ':''}then speed ${Math.round(SPEED_W*100)}% + free throws ${Math.round(FT_W*100)}%.</div>
@@ -459,7 +469,7 @@ $('#file').onchange=async e=>{ const f=e.target.files[0]; if(!f)return; const bu
   try{ localStorage.removeItem('dp_tags'); localStorage.setItem('dp_file',b64(buf)); localStorage.setItem('dp_name',f.name);}catch(x){ alert('Could not autosave this file in the browser. Export often.'); }
   load(buf,f.name); save(); e.target.value=''; };
 $('#export').onclick=exportXlsx;
-$('#clear').onclick=()=>{ if(confirm('Delete the loaded file and ALL tags from this device?')){ ['dp_file','dp_name','dp_tags','dp_time','dp_board','dp_rec','dp_team','dp_votes'].forEach(k=>localStorage.removeItem(k)); location.reload(); } };
+$('#clear').onclick=()=>{ if(confirm('Delete the loaded file and ALL tags from this device?')){ ['dp_file','dp_name','dp_tags','dp_time','dp_board','dp_rec','dp_team','dp_votes','dp_boardfile'].forEach(k=>localStorage.removeItem(k)); location.reload(); } };
 $('#clrf').onclick=clearFilters;
 $('#hat').onchange=()=>go(curView==='prof'?'home':curView);
 $('#hq').addEventListener('input',hres);
@@ -477,6 +487,7 @@ document.addEventListener('click',e=>{ const t=e.target;
   x=t.closest('[data-votefile]'); if(x){$('#vfile').click();return;}
   x=t.closest('[data-vsort]'); if(x){vsort=!vsort;renderDraft();return;}
   x=t.closest('[data-vhide]'); if(x){vhide=!vhide;renderDraft();return;}
+  x=t.closest('[data-expboard]'); if(x){exportBoard();return;}
   x=t.closest('[data-undo]'); if(x){ undoPick(); return;}
   x=t.closest('[data-showall]'); if(x){ showAll=!showAll; renderDraft(); return;}
   x=t.closest('[data-k]'); if(x){ openProf(+x.dataset.k, curView==='list'?view.slice():curView==='draft'?dview.slice():null); return;}
@@ -488,7 +499,7 @@ $('#vfile').onchange=async e=>{ const f=e.target.files[0]; if(!f)return;
   catch(x){ dmsg=['e','Could not read the votes file: '+x.message]; }
   e.target.value=''; renderDraft(); };
 $('#bfile').onchange=async e=>{ const f=e.target.files[0]; if(!f)return;
-  try{ const w=XLSX.read(await f.arrayBuffer(),{type:'array'}); board=parseBoard(XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{header:1,raw:true,defval:null,blankrows:true}));
+  try{ const bf=await f.arrayBuffer(); const w=XLSX.read(bf,{type:'array'}); boardB64=b64(bf); try{localStorage.setItem('dp_boardfile',boardB64);}catch(x){} board=parseBoard(XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{header:1,raw:true,defval:null,blankrows:true}));
     rec={}; myTeam=(board.teams.find(t=>/tempo/i.test(t.team))||board.teams[0]).team; dmsg=['o',`Loaded ${board.picks.length} picks for ${board.teams.length} teams.`]; saveDraft(); }
   catch(x){ board=null; dmsg=['e','Could not read that file as a draft board: '+x.message]; }
   e.target.value=''; renderDraft(); };
